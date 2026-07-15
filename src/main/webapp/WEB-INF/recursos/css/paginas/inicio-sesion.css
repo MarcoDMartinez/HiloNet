@@ -1,0 +1,16 @@
+/* Login — tarjeta de inicio de sesión, enlace de recuperación de contraseña y textos relacionados. */
+.forgot-password-container { display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 16px; }
+.link-forgot { font-size: 11px; color: var(--marron); text-decoration: none; font-weight: 600; }
+.link-forgot:hover { color: var(--azul-corte); text-decoration: underline; }
+.contact-admin-text { text-align: center; font-size: 11px; color: var(--texto-tenue); margin-top: 14px; }
+
+/* Login Estructura */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--crema); padding: 20px; }
+.login-card { background: #fff; border-radius: 16px; padding: 36px; max-width: 420px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,.08); }
+.login-card .logo { width: 64px; height: 64px; border-radius: 50%; background: var(--texto); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px; }
+.login-card h1 { text-align: center; font-size: 22px; margin-bottom: 4px; }
+.login-card .tagline { text-align: center; color: var(--texto-tenue); font-size: 12px; margin-bottom: 24px; }
+.test-buttons { margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--borde); }
+.test-buttons .lbl { font-size: 10px; color: var(--texto-tenue); text-align: center; margin-bottom: 8px; }
+.area-btns { display: flex; gap: 8px; margin-top: 8px; }
+.area-btns .btn { flex: 1; }

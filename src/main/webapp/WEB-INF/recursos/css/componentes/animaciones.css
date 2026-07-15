@@ -1,0 +1,6 @@
+/* Animaciones — transición de entrada de vistas y ajustes de accesibilidad (focus, reduced motion). */
+.view { animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+:focus-visible { outline: 2px solid var(--marron); outline-offset: 2px; }
+@media(prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

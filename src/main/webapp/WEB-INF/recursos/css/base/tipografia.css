@@ -1,0 +1,15 @@
+/* Tipografía — fuente base, tamaños de encabezados y utilidades de texto (muted/sec/small). */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--texto);
+  background: var(--crema);
+  line-height: 1.4;
+}
+
+/* ---------- utilidades tipográficas ---------- */
+h1 { font-size: 28px; font-weight: 700; }
+h2 { font-size: 18px; font-weight: 700; }
+h3 { font-size: 15px; font-weight: 700; }
+.muted { color: var(--texto-tenue); }
+.sec { color: var(--texto-sec); }
+.small { font-size: 11px; }

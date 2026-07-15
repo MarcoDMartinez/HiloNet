@@ -1,0 +1,46 @@
+/* Formularios — campos de texto, selects, contraseña, selector de color y checkboxes. */
+
+/* Edición dinámica en formulario */
+.input-edit-inline { width: 100%; padding: 6px 10px; border: 2px solid var(--marron); border-radius: 8px; font-family: inherit; }
+.pri-high-text { color: var(--rojo-error); }
+
+/* Campos de formulario */
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--texto-sec); margin-bottom: 6px; }
+.field input, .field select, .field textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--borde-fuerte); background: var(--blanco-calido); font-family: inherit; font-size: 13px; color: var(--texto); }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--marron); background: #fff; }
+.field textarea { resize: vertical; min-height: 80px; }
+.password-field { position: relative; }
+.password-field input { padding-right: 44px; }
+.password-toggle {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  border: none; background: transparent; cursor: pointer; color: var(--texto-sec);
+  padding: 4px; display: inline-flex; align-items: center; justify-content: center;
+}
+.password-toggle:hover { color: var(--marron); }
+.password-toggle svg { width: 16px; height: 16px; display: block; }
+
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  flex-shrink: 0;
+}
+.color-swatch:hover { transform: scale(1.05); }
+.color-swatch.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(0,0,0,.08);
+}
+.field-row { display: flex; gap: 16px; }
+.field-row .field { flex: 1; }
+.field-checkbox-label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.input-check-auto { width: auto !important; }
