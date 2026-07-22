@@ -16,7 +16,7 @@ public class AuthController extends HttpServlet {
         String path = request.getRequestURI();
         
         if (path.endsWith("/login")) {
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
         } else if (path.endsWith("/recuperar")) {
             request.getRequestDispatcher("/WEB-INF/views/recuperar-contrasena.jsp").forward(request, response);
         }

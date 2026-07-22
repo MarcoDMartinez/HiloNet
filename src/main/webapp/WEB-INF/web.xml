@@ -12,4 +12,13 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     
+    <!-- Bloquear acceso directo a WEB-INF -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Protected</web-resource-name>
+            <url-pattern>/WEB-INF/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint/>
+    </security-constraint>
+    
 </web-app>
