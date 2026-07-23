@@ -7,13 +7,13 @@
   <title>Recuperar acceso — HiloNet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/base/variables.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/base/reinicio-estilos.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/base/tipografia.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/componentes/botones.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/componentes/formularios.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/paginas/inicio-sesion.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/WEB-INF/recursos/css/paginas/recuperacion-contrasena.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/base/variables.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/base/reinicio-estilos.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/base/tipografia.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/componentes/botones.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/componentes/formularios.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/paginas/inicio-sesion.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/paginas/recuperacion-contrasena.css">
 </head>
 <body>
   <div class="recover-wrap">
@@ -63,6 +63,6 @@
     </div>
   </div>
 
-  <script src="${pageContext.request.contextPath}/WEB-INF/recursos/js/paginas/autenticacion/recuperacion.js"></script>
+  <script src="${pageContext.request.contextPath}/recursos/js/paginas/autenticacion/recuperacion.js"></script>
 </body>
 </html>

@@ -1,0 +1,18 @@
+/* Estructura general — contenedor .app, área de contenido y utilidades de espaciado (flex, filas, márgenes). */
+.app { display: flex; min-height: 100vh; }
+
+.content { padding: 24px 32px; flex: 1; }
+.page-title { margin-bottom: 6px; }
+.page-sub { color: var(--texto-sec); font-size: 13px; margin-bottom: 20px; }
+.page-sub-zero { color: var(--texto-sec); font-size: 13px; margin-bottom: 0; }
+
+.ml-4 { margin-left: 4px; }
+.gap-10 { gap: 10px; }
+
+.row { display: flex; gap: 16px; flex-wrap: wrap; }
+.row > * { flex: 1; min-width: 0; }
+.mt { margin-top: 16px; }
+.mb { margin-bottom: 16px; }
+.flex { display: flex; align-items: center; gap: 8px; }
+.between { justify-content: space-between; }
+.hidden { display: none !important; }

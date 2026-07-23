@@ -1,0 +1,6 @@
+/* Modal — overlay y ventana emergente de notificaciones del sistema. */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50; display: none; align-items: center; justify-content: center; padding: 20px; }
+.overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 16px; padding: 32px; max-width: 620px; width: 100%; max-height: 90vh; overflow: auto; }
+.modal h2 { margin-bottom: 6px; }
+.modal .close { float: right; font-size: 20px; color: var(--texto-tenue); cursor: pointer; background: none; border: none; }

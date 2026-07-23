@@ -1,0 +1,11 @@
+/* Barra superior — encabezado con nombre de usuario, rol y avatar. */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  height: 64px; background: var(--blanco-calido);
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 32px; gap: 12px; border-bottom: 1px solid var(--borde);
+}
+.topbar .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--beige-menu); }
+.topbar .who { text-align: right; }
+.topbar .who b { display: block; font-size: 13px; font-weight: 500; }
+.topbar .who span { font-size: 11px; color: var(--texto-tenue); }
