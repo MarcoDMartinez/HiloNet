@@ -1,8 +1,0 @@
-/* Listas de filas — filas de tareas/incidencias con borde de color según el área. */
-.list-row { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--borde); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; border-left: 4px solid var(--marron); }
-.list-row .grow { flex: 1; min-width: 0; }
-.list-row .title { font-size: 13px; font-weight: 600; }
-.list-row .meta { font-size: 11px; color: var(--texto-tenue); }
-.list-row.corte { border-left-color: var(--azul-corte); }
-.list-row.costura { border-left-color: var(--marron-costura); }
-.list-row.diseno { border-left-color: var(--verde-diseno); }

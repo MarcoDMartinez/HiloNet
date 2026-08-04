@@ -42,12 +42,17 @@ function adminIncidencias(arg) {
   const inicio = incidenciasPage * INCIDENCIAS_ADMIN_PAGE_SIZE;
   const rowsPagina = rowsFiltradas.slice(inicio, inicio + INCIDENCIAS_ADMIN_PAGE_SIZE);
 
+  // Contar incidencias sin publicar
+  const filas = Object.entries(INCIDENCIAS).flatMap(([areaKey, lista]) =>
+    lista.map((it, idx) => ({ areaKey, idx, publicada: isIncidenciaPublicada(areaKey, idx) }))
+  );
+  const sinPublicar = filas.filter(f => !f.publicada).length;
+
   return `
   <div class="flex between mb">
     <div><h1>Incidencias</h1>
     <p class="page-sub-zero">Registro y gestión de incidencias por área de trabajo.</p></div>
     <div class="flex gap-10">
-      <button class="btn btn-secondary" data-go="publicarIncidencias">Publicar incidencias</button>
       <button class="btn btn-primary" data-go="crearIncidencia">+ Nueva incidencia</button>
     </div>
   </div>
@@ -62,7 +67,8 @@ function adminIncidencias(arg) {
     <thead><tr><th>ID</th><th>Descripción</th><th>Área</th><th>Responsable</th><th>Prioridad</th><th>Estado</th><th>Acciones</th></tr></thead>
     <tbody>${rowsPagina.length ? rowsPagina.map(x => rowIncidenciaHTML(x)).join('') : `<tr><td colspan="7" class="muted">No hay incidencias con este filtro.</td></tr>`}</tbody>
   </table>
-  ${paginacionHTML('incidencias', incidenciasPage, totalPaginas)}`;
+  ${paginacionHTML('incidencias', incidenciasPage, totalPaginas)}
+  ${adminPublicarIncidenciasResumen(sinPublicar)}`;
 }
 
 function adminPublicarIncidencias(arg) {
@@ -102,6 +108,29 @@ function adminPublicarIncidencias(arg) {
     }).join('')}</tbody>
   </table>
   ${paginacionHTML('publicarIncidencias', currentPage, totalPaginas)}`;
+}
+
+function adminPublicarIncidenciasResumen(sinPublicar) {
+  if (sinPublicar === 0) return '';
+
+  const filas = Object.entries(INCIDENCIAS).flatMap(([areaKey, lista]) =>
+    lista.map((it, idx) => ({ areaKey, idx, id: it[0], desc: it[1], prioridad: it[2] }))
+  );
+  const noPublicadas = filas.filter(f => !isIncidenciaPublicada(f.areaKey, f.idx)).slice(0, 3);
+
+  return `
+  <div class="card mb" style="border-left: 4px solid var(--rojo-error); background: rgba(255, 70, 70, 0.08);">
+    <div class="flex between align-center">
+      <div style="flex: 1;">
+        <div style="font-weight: 600; color: var(--rojo-error); margin-bottom: 8px;">⚠️ ${sinPublicar} incidencia${sinPublicar !== 1 ? 's' : ''} por publicar</div>
+        <div style="font-size: 13px; color: #666; margin-bottom: 8px;">
+          ${noPublicadas.map(f => `<div>• ${f.desc}</div>`).join('')}
+          ${sinPublicar > 3 ? `<div>• Y ${sinPublicar - 3} más...</div>` : ''}
+        </div>
+      </div>
+      <button class="btn btn-secondary" data-go="publicarIncidencias">Publicar incidencias</button>
+    </div>
+  </div>`;
 }
 
 ADMIN.incidencias = function (arg) { return adminIncidencias(arg); };

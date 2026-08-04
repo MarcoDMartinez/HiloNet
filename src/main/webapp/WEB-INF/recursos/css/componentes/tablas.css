@@ -1,7 +1,0 @@
-/* Tablas — estilo base de las tablas de datos (encabezado, filas, hover). */
-.table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--borde); }
-.table thead th { background: var(--bg-header); text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600; color: var(--texto-sec); }
-.table tbody td { padding: 14px 16px; font-size: 12px; border-top: 1px solid var(--borde); }
-.table tbody tr:hover { background: var(--blanco-calido); }
-.table .id { font-weight: 700; color: var(--marron); }
-.table .name { font-weight: 600; }
