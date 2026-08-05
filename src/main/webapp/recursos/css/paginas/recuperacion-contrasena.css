@@ -4,11 +4,13 @@
 	--recover-width: 560px;
 }
 
+.recover-card .hidden { display: none !important; }
+
 /* Centrar la tarjeta en la página standalone */
 .recover-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 28px; }
 .recover-card { width: 100%; max-width: var(--recover-width); background: var(--fondo-blanco, #fff); border-radius: 12px; padding: 28px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
 
-.recover-card .logo { font-size: 36px; text-align: center; margin-bottom: 8px; }
+.recover-card .logo { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 12px; background: url('../../img/carrete-hilo.svg') center/cover; }
 .recover-card h1, .recover-card h2 { text-align: center; margin: 6px 0 10px; }
 .recover-card .hint { text-align: center; color: var(--texto-sec); margin-bottom: 18px; }
 

@@ -5,6 +5,9 @@ const AREAS_INFO = {
   diseno:  { label: 'Diseño',  cls: 'diseno',  color: 'var(--verde-diseno)',  worker: 'Marco D.' },
 };
 
+/* Contraseñas personalizadas por sesión ('admin' o el areaKey del trabajador). Si no hay una registrada, se usa '123' por defecto. */
+const CONTRASENAS = {};
+
 const PEDIDOS = [
   { id: 'P-0023', cli: 'Confecciones Morelos', desc: '20 camisetas polo bordadas', areas: 'Diseño, Costura', fecha: '2026-06-15', est: 'En producción', estCls: 'proc' },
   { id: 'P-0021', cli: 'Uniformes UAEM', desc: '50 sudaderas con capucha', areas: 'Corte, Costura', fecha: '2026-06-18', est: 'Pendiente', estCls: 'pend' },
@@ -23,10 +26,10 @@ const AREAS_CAT = [
 ];
 
 const USUARIOS = [
-  { id: 'E-014', nom: 'Lander Bautista', user: 'lander', area: 'Corte', rol: 'Empleado', act: true },
-  { id: 'E-009', nom: 'Merari Núñez', user: 'merari', area: 'Costura', rol: 'Empleado', act: true },
-  { id: 'E-003', nom: 'Marco Díaz', user: 'marcod', area: 'Diseño', rol: 'Empleado', act: true },
-  { id: 'E-021', nom: 'Rosa Jiménez', user: 'rosaj', area: 'Corte', rol: 'Empleado', act: true },
+  { id: 'E-014', nom: 'Lander Bautista', user: 'lander', area: 'Corte', rol: 'Trabajador', act: true },
+  { id: 'E-009', nom: 'Merari Núñez', user: 'merari', area: 'Costura', rol: 'Trabajador', act: true },
+  { id: 'E-003', nom: 'Marco Díaz', user: 'marcod', area: 'Diseño', rol: 'Trabajador', act: true },
+  { id: 'E-021', nom: 'Rosa Jiménez', user: 'rosaj', area: 'Corte', rol: 'Trabajador', act: true },
   { id: 'A-001', nom: 'Admin General', user: 'admin', area: '—', rol: 'Administrador', act: true },
 ];
 

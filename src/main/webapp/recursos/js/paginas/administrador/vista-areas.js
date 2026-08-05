@@ -19,7 +19,7 @@ function rowAreaHTML(a) {
           <td class="flex gap-10">
             <button class="btn btn-primary btn-sm" data-go="detalleArea" data-arg="${a.id}">Ver detalle</button>
             ${puedeEliminar ? `<button class="btn btn-danger btn-sm" data-action="delete-area" data-area-id="${a.id}">Eliminar</button>` : ''}
-            <button class="btn btn-ghost btn-sm" data-toast="Área ${a.act ? 'desactivada' : 'activada'}">${a.act ? 'Desactivar' : 'Activar'}</button>
+            <button class="btn btn-ghost btn-sm" data-action="toggle-area" data-area-id="${a.id}" data-volver="areas">${a.act ? 'Desactivar' : 'Activar'}</button>
           </td>
         </tr>`;
 }
@@ -56,7 +56,7 @@ ADMIN.areas = function (arg) {
 
 ADMIN.detalleArea = function (id) {
   const a = AREAS_CAT.find(x => x.id === id) || AREAS_CAT[1];
-  const emps = [['E-014', 'Lander Bautista', 'lander', 'Cortador principal', true], ['E-021', 'Rosa Jiménez', 'rosaj', 'Cortadora', true], ['E-027', 'Diego Márquez', 'diegom', 'Ayudante de corte', true], ['E-033', 'Karla Ríos', 'karlar', 'Cortadora', true]];
+  const empleadosArea = USUARIOS.filter((u) => u.area === a.nom);
   const areaColor = a.color || '#999';
   return `
     <div class="crumb">Áreas › <b>${a.id} · ${a.nom}</b></div>
@@ -65,31 +65,76 @@ ADMIN.detalleArea = function (id) {
       <div class="flex between">
         <div>
           <div class="flex"><span class="area-dot-lg" style="background:${areaColor}"></span><h1>${a.nom}</h1>
-          <span class="badge proc">${a.id}</span><span class="badge activa">Activa</span></div>
-          <p class="sec mt">Responsable: ${a.resp} · ${a.emp} empleados asignados · Turno matutino</p>
+          <span class="badge proc">${a.id}</span><span class="badge ${a.act ? 'activa' : 'inactiva'}">${a.act ? 'Activa' : 'Inactiva'}</span></div>
+          <p class="sec mt">Responsable: ${a.resp} · ${empleadosArea.length} empleados asignados · Turno ${(a.turno || 'Matutino').toLowerCase()}</p>
         </div>
         <div class="flex gap-10">
           <button class="btn btn-ghost" data-go="editarArea" data-arg="${a.id}">Editar área</button>
-          <button class="btn btn-danger" data-toast="Área desactivada de producción">Desactivar</button>
+          <button class="btn btn-danger" data-action="toggle-area" data-area-id="${a.id}" data-volver="detalleArea">${a.act ? 'Desactivar' : 'Activar'}</button>
         </div>
       </div>
     </div>
     <div class="flex between mb">
       <h2>Empleados asignados</h2>
-      <button class="btn btn-blue" data-toast="Abriendo listado general para vinculación...">+ Vincular empleado</button>
+      <button type="button" class="btn btn-blue" data-action="vincular-empleado" data-area-id="${a.id}">+ Vincular empleado</button>
     </div>
     <table class="table">
       <thead><tr><th>ID</th><th>Nombre</th><th>Usuario</th><th>Puesto</th><th>Acciones</th></tr></thead>
-      <tbody>${emps.map(e => `
+      <tbody>${empleadosArea.length ? empleadosArea.map(e => `
         <tr>
-          <td class="id">${e[0]}</td><td class="name">${e[1]}</td><td class="sec">${e[2]}</td><td class="sec">${e[3]}</td>
+          <td class="id">${e.id}</td><td class="name">${e.nom}</td><td class="sec">${e.user}</td><td class="sec">${e.puesto || '—'}</td>
           <td class="flex gap-10">
-            <button class="btn btn-ghost btn-sm" data-go="perfilEmpleado" data-arg="${e[0]}">Ver perfil</button>
-            <button class="btn btn-danger btn-sm" data-toast="Empleado desvinculado del área">Quitar</button>
+            <button class="btn btn-ghost btn-sm" data-go="perfilEmpleado" data-arg="${e.id}">Ver perfil</button>
+            <button class="btn btn-danger btn-sm" data-action="quitar-empleado-area" data-arg="${e.id}" data-area-id="${a.id}">Quitar</button>
           </td>
-        </tr>`).join('')}</tbody>
+        </tr>`).join('') : `<tr><td colspan="5" class="muted">No hay empleados asignados a esta área.</td></tr>`}</tbody>
     </table>`;
 };
+
+function abrirVincularEmpleado(areaId) {
+  const area = AREAS_CAT.find((x) => x.id === areaId);
+  if (!area) return;
+  const candidatos = USUARIOS.filter((u) => u.rol !== 'Administrador' && u.area !== area.nom);
+
+  const overlay = $('#overlay');
+  const modal = $('#modal');
+  modal.innerHTML = `
+    <button class="close" id="closeModal">×</button>
+    <h2>Vincular empleado a ${area.nom}</h2>
+    <p class="sec mt">Selecciona un empleado para asignarlo a esta área.</p>
+    <div class="mt">
+      ${candidatos.length ? candidatos.map((u) => `
+        <div class="list-row mt">
+          <div class="grow"><div class="title">${u.nom}</div><div class="meta">${u.user} · Actualmente en ${u.area}</div></div>
+          <button type="button" class="btn btn-primary btn-sm" data-action="confirmar-vincular-empleado" data-arg="${u.id}" data-area-id="${area.id}">Vincular</button>
+        </div>`).join('') : `<p class="muted mt">No hay empleados disponibles para vincular.</p>`}
+    </div>`;
+  overlay.classList.add('open');
+  $('#closeModal').onclick = () => overlay.classList.remove('open');
+}
+
+function confirmarVincularEmpleado(userId, areaId) {
+  const u = USUARIOS.find((x) => x.id === userId);
+  const area = AREAS_CAT.find((x) => x.id === areaId);
+  if (!u || !area) return;
+
+  u.area = area.nom;
+  guardarEstadoPersistido();
+  $('#overlay').classList.remove('open');
+  go('detalleArea', areaId);
+  toast(`${u.nom} fue vinculado al área ${area.nom}.`);
+}
+
+function quitarEmpleadoDeArea(userId, areaId) {
+  const u = USUARIOS.find((x) => x.id === userId);
+  if (!u) return;
+
+  const areaAnterior = u.area;
+  u.area = 'Sin asignar';
+  guardarEstadoPersistido();
+  go('detalleArea', areaId);
+  toast(`${u.nom} fue desvinculado del área ${areaAnterior}.`);
+}
 
 ADMIN.crearArea = function () {
   return `
@@ -144,23 +189,24 @@ ADMIN.crearArea = function () {
 };
 
 ADMIN.editarArea = function (id) {
+  const a = AREAS_CAT.find((x) => x.id === id) || AREAS_CAT[0];
   return `
     <h1>Editar área</h1>
-    <button class="btn btn-ghost btn-sm mb" data-go="detalleArea" data-arg="${id || 'A-02'}">← Volver</button>
+    <button class="btn btn-ghost btn-sm mb" data-go="detalleArea" data-arg="${a.id}">← Volver</button>
     <div class="card" style="max-width:700px">
-      <div class="card-head blue">Editar datos del área — Corte</div>
+      <div class="card-head blue">Editar datos del área — ${a.nom}</div>
       <div class="field-row">
-        <div class="field"><label>Nombre del área</label><input value="Corte"></div>
-        <div class="field" style="max-width:140px"><label>ID</label><input value="A-02" disabled></div>
+        <div class="field"><label>Nombre del área *</label><input id="editAreaNombre" value="${a.nom}"></div>
+        <div class="field" style="max-width:140px"><label>ID</label><input value="${a.id}" disabled></div>
       </div>
-      <div class="field"><label>Responsable</label><select><option>Lander B.</option><option>Rosa J.</option></select></div>
+      <div class="field"><label>Responsable</label><input id="editAreaResponsable" value="${a.resp}"></div>
       <div class="field-row">
-        <div class="field"><label>Turno</label><select><option>Matutino</option><option>Vespertino</option></select></div>
-        <div class="field"><label>Capacidad</label><input value="8 empleados"></div>
+        <div class="field"><label>Turno</label><select id="editAreaTurno">${['Matutino', 'Vespertino'].map((t) => `<option${t === (a.turno || 'Matutino') ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
+        <div class="field"><label>Capacidad</label><input id="editAreaCapacidad" type="number" min="0" value="${a.emp}"></div>
       </div>
       <div class="flex gap-10">
-        <button class="btn btn-ghost btn-lg btn-block" data-go="detalleArea" data-arg="A-02">Cancelar</button>
-        <button class="btn btn-green btn-lg btn-block" data-toast="Cambios guardados con éxito" data-back="detalleArea" data-back-arg="A-02">Guardar cambios</button>
+        <button class="btn btn-ghost btn-lg btn-block" data-go="detalleArea" data-arg="${a.id}">Cancelar</button>
+        <button type="button" class="btn btn-green btn-lg btn-block" data-action="guardar-edicion-area" data-arg="${a.id}">Guardar cambios</button>
       </div>
     </div>`;
 };

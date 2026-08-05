@@ -102,7 +102,7 @@ ADMIN.crearPedido = function () {
             <div class="flex gap-10">
               <div class="evidencia-box img-square">Imagen 1</div>
               <div class="evidencia-box img-square">Imagen 2</div>
-              <div class="evidencia-upload img-square" data-toast="Cargando gestor de archivos multimedia...">+ Subir</div>
+              <div class="evidencia-upload img-square">+ Subir</div>
             </div>
           </div>
           <div class="pedido-desglose" id="pedidoDesglose">
@@ -142,7 +142,7 @@ ADMIN.detallePedido = function (id) {
       <div class="card" id="datosPedido">
         <h3>Datos del pedido</h3>
         <p class="small sec mt">Cliente</p><b id="cliVal">${p.cli}</b>
-        <p class="small sec mt">Prioridad</p><b id="priVal" class="pri-high-text">Alta</b>
+        <p class="small sec mt">Prioridad</p><b id="priVal" class="pri-high-text">${p.pri || 'Alta'}</b>
         <p class="small sec mt">Cantidad</p><b>20 piezas</b>
         <p class="small sec mt">Fecha entrega</p><b>${p.fecha}</b>
       </div>
@@ -151,7 +151,7 @@ ADMIN.detallePedido = function (id) {
         <div class="flex mt gap-10">
           <div class="evidencia-box">Foto 1</div>
           <div class="evidencia-box">Foto 2</div>
-          <div class="evidencia-upload" data-toast="Cargando gestor de archivos multimedia...">+ Subir</div>
+          <div class="evidencia-upload">+ Subir</div>
         </div>
       </div>
     </div>
@@ -192,6 +192,8 @@ function editarPedido(id) {
 
   const cli = $('#cliVal'), pri = $('#priVal');
   if (!cli) return;
+  const p = PEDIDOS.find((x) => x.id === id);
+  if (!p) return;
   pedidoEnEdicion = id;
   const editBtn = document.querySelector('[data-action="edit-pedido"]');
   if (editBtn) {
@@ -199,17 +201,37 @@ function editarPedido(id) {
     editBtn.textContent = 'Editando...';
     editBtn.classList.add('btn-ghost');
   }
-  cli.outerHTML = `<input id="cliVal" value="Confecciones Morelos" class="input-edit-inline">`;
-  pri.outerHTML = `<select id="priVal" class="input-edit-inline"><option>Alta</option><option>Media</option><option>Baja</option></select>`;
+  const prioridadActual = p.pri || 'Alta';
+  cli.outerHTML = `<input id="cliVal" value="${p.cli}" class="input-edit-inline">`;
+  pri.outerHTML = `<select id="priVal" class="input-edit-inline">${['Alta', 'Media', 'Baja'].map((op) => `<option${op === prioridadActual ? ' selected' : ''}>${op}</option>`).join('')}</select>`;
 
   const card = $('#datosPedido');
   const bar = document.createElement('div');
   bar.className = 'flex mt gap-10';
   bar.innerHTML = `
     <button class="btn btn-ghost btn-sm btn-block" data-go="detallePedido" data-arg="${id}">Cancelar</button>
-    <button class="btn btn-green btn-sm btn-block" data-toast="Pedido actualizado correctamente" data-back="detallePedido" data-back-arg="${id}">Guardar</button>`;
+    <button type="button" class="btn btn-green btn-sm btn-block" data-action="guardar-edicion-pedido" data-pid="${id}">Guardar</button>`;
   card.appendChild(bar);
   toast('Modo edición activo: Puede actualizar los datos correspondientes.');
+}
+
+function guardarEdicionPedido(id) {
+  const cliInput = $('#cliVal'), priSelect = $('#priVal');
+  if (!cliInput || !priSelect) return;
+
+  if (!cliInput.value.trim()) {
+    toast('Ingresa el nombre del cliente.', 'error');
+    return;
+  }
+
+  const p = PEDIDOS.find((x) => x.id === id);
+  if (p) {
+    p.cli = cliInput.value.trim();
+    p.pri = priSelect.value;
+  }
+  pedidoEnEdicion = null;
+  go('detallePedido', id);
+  toast('Pedido actualizado correctamente.');
 }
 
 function agregarActividadPedido(area) {
@@ -228,7 +250,7 @@ function agregarDesglosePedido() {
   const contenedor = $('#pedidoDesglose');
   if (!sexo || !pzs || !talla || !contenedor) return;
   if (!sexo.value || !pzs.value || !talla.value) {
-    alert('Selecciona sexo, cantidad de piezas y talla para agregar a la lista.');
+    toast('Selecciona sexo, cantidad de piezas y talla para agregar a la lista.', 'error');
     return;
   }
   const row = document.createElement('div');
@@ -248,7 +270,7 @@ function crearNuevoPedidoDesdeFormulario() {
   const fecha = $('#pedidoFecha')?.value;
 
   if (!cliente || !desc || !fecha) {
-    alert('Completa los campos obligatorios: nombre del cliente, descripción y fecha de entrega.');
+    toast('Completa los campos obligatorios: nombre del cliente, descripción y fecha de entrega.', 'error');
     return;
   }
 

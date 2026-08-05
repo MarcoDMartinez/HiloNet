@@ -26,5 +26,13 @@
 .nav-item.area-diseno.active { background: var(--verde-diseno); }
 .sidebar .divider { height: 1px; background: #a08b78; margin: 12px 12px; }
 .sidebar .foot { margin-top: auto; padding: 0 8px 16px; }
+.nav-item-area-accent {
+  border-left: 3px solid var(--color-area, transparent);
+  padding-left: 9px;
+  color: var(--color-area, var(--texto));
+  font-weight: 600;
+}
+.nav-item-area-accent:hover { background: var(--color-area, #b3a390); color: #fff; }
+.nav-item-area-accent.active { background: var(--color-area, var(--marron)); color: #fff; }
 .area-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 .area-dot-lg { width: 16px; height: 16px; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: inset 0 0 0 2px rgba(255,255,255,.8); margin-right: 8px; }
