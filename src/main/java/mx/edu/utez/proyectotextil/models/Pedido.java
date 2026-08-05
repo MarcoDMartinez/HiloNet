@@ -39,11 +39,12 @@ public class Pedido {
 
     public LocalDateTime getFecha() { return fecha; }
     public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
-
+    
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
-
+    
     public LocalDateTime getCreado() { return creado; }
+    public void setCreado(LocalDateTime creado) { this.creado = creado; }
     public LocalDateTime getActualizado() { return actualizado; }
     public void setActualizado(LocalDateTime actualizado) { this.actualizado = actualizado; }
 }

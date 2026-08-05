@@ -1,30 +1,50 @@
-/* Login — valida credenciales, procesa el envío del formulario y maneja el flujo de recuperación de contraseña. */
-function validarCredenciales(usuario, password) {
-  const user = (usuario || '').trim().toLowerCase();
+/* Login — valida credenciales contra la base de datos y maneja el flujo de recuperación de contraseña. */
+async function validarCredenciales(usuario, password) {
+  const user = (usuario || '').trim();
   const pass = (password || '').trim();
 
-  if (user === 'ad' || user === 'admin') {
-    if (pass !== (CONTRASENAS['admin'] || '123')) {
-      return { ok: false, message: 'La contraseña es incorrecta.' };
-    }
-    return { ok: true, who: 'admin' };
+  if (!user || !pass) {
+    return { ok: false, message: 'Usuario y contraseña requeridos.' };
   }
 
-  const area = typeof window.getAreaForUser === 'function' ? window.getAreaForUser(user) : null;
-  if (area && /^tr\d+$/.test(user)) {
-    if (pass !== (CONTRASENAS[area.areaKey] || '123')) {
-      return { ok: false, message: 'La contraseña es incorrecta.' };
-    }
-    return { ok: true, who: area.areaKey, area };
-  }
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, password: pass })
+    });
+    const data = await response.json();
 
-  return { ok: false, message: 'Usuario no válido. Usa ad, tr1, tr2, tr3 o los siguientes usuarios creados.' };
+    if (!response.ok || !data.success) {
+      return { ok: false, message: data.message || 'Credenciales inválidas.' };
+    }
+
+    const usuarioData = data.usuario || {};
+    const rol = (usuarioData.rol || '').toUpperCase();
+    const esAdmin = rol === 'ADMIN' || rol === 'ADMINISTRADOR';
+
+    if (esAdmin) {
+      return { ok: true, who: 'admin' };
+    }
+
+    const area = AREAS_CAT.find((item) => item.nom === usuarioData.area || item.areaKey === usuarioData.area) || null;
+    return {
+      ok: true,
+      who: usuarioData.id ? String(usuarioData.id) : user,
+      area: area ? {
+        ...area,
+        areaKey: area.areaKey || normalizarTextoParaClave(area.nom)
+      } : null
+    };
+  } catch (error) {
+    return { ok: false, message: 'No se pudo conectar con el servidor.' };
+  }
 }
 
-function iniciarSesionDesdeFormulario() {
+async function iniciarSesionDesdeFormulario() {
   const usuario = $('#loginUser').value;
   const password = $('#loginPassword').value;
-  const resultado = validarCredenciales(usuario, password);
+  const resultado = await validarCredenciales(usuario, password);
 
   if (!resultado.ok) {
     toast(resultado.message, 'error');

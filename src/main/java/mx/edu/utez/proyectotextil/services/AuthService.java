@@ -1,19 +1,9 @@
 package mx.edu.utez.proyectotextil.services;
 
 import mx.edu.utez.proyectotextil.models.Usuario;
-import java.util.HashMap;
-import java.util.Map;
+import mx.edu.utez.proyectotextil.dao.UsuarioDao;
 
 public class AuthService {
-    private static final Map<String, Usuario> usuariosCache = new HashMap<>();
-
-    static {
-        // Datos iniciales - será reemplazado con BD
-        usuariosCache.put("admin", new Usuario("A-001", "Admin General", "admin", "admin123", null, "ADMIN"));
-        usuariosCache.put("lander", new Usuario("E-014", "Lander Bautista", "lander", "123", "Corte", "EMPLEADO"));
-        usuariosCache.put("merari", new Usuario("E-009", "Merari Núñez", "merari", "123", "Costura", "EMPLEADO"));
-        usuariosCache.put("marcod", new Usuario("E-003", "Marco Díaz", "marcod", "123", "Diseño", "EMPLEADO"));
-    }
 
     public static class LoginResult {
         public boolean success;
@@ -42,19 +32,13 @@ public class AuthService {
             return new LoginResult(false, "Contraseña requerida", null);
         }
 
-        String user = username.trim().toLowerCase();
-        Usuario usuario = usuariosCache.get(user);
+        String user = username.trim();
+        UsuarioDao dao = new UsuarioDao();
+        dao.ensureDefaultAdminExists();
+        Usuario usuario = dao.login(user, password);
 
         if (usuario == null) {
-            return new LoginResult(false, "Usuario no encontrado", null);
-        }
-
-        if (!usuario.getPassword().equals(password)) {
-            return new LoginResult(false, "Contraseña incorrecta", null);
-        }
-
-        if (!usuario.isActivo()) {
-            return new LoginResult(false, "Usuario inactivo", null);
+            return new LoginResult(false, "Usuario o contraseña incorrectos", null);
         }
 
         return new LoginResult(true, "Login exitoso", usuario);
@@ -64,7 +48,11 @@ public class AuthService {
      * Recupera un usuario por username
      */
     public static Usuario obtenerUsuarioPorUsername(String username) {
-        return usuariosCache.get(username != null ? username.toLowerCase() : null);
+        if (username == null || username.trim().isEmpty()) {
+            return null;
+        }
+        UsuarioDao dao = new UsuarioDao();
+        return dao.findByNumeroTelefono(username.trim());
     }
 
     /**
@@ -83,20 +71,17 @@ public class AuthService {
      * Actualiza la contraseña de un usuario
      */
     public static boolean actualizarContraseña(String username, String contraseñaActual, String contraseñaNueva) {
-        Usuario usuario = usuariosCache.get(username != null ? username.toLowerCase() : null);
-        if (usuario == null) {
+        if (username == null || username.trim().isEmpty()) {
             return false;
         }
-
-        if (!usuario.getPassword().equals(contraseñaActual)) {
+        if (contraseñaActual == null || contraseñaNueva == null) {
             return false;
         }
-
         if (!validarContraseña(contraseñaNueva)) {
             return false;
         }
 
-        usuario.setPassword(contraseñaNueva);
-        return true;
+        UsuarioDao dao = new UsuarioDao();
+        return dao.actualizarPassword(username.trim(), contraseñaActual, contraseñaNueva);
     }
 }

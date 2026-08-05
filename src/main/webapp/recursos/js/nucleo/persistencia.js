@@ -29,7 +29,7 @@ function guardarEstadoPersistido() {
   }
 }
 
-const estadoPersistido = cargarEstadoPersistido();
+const estadoPersistido = !window.DATOS_DESDE_BD_CARGADOS ? cargarEstadoPersistido() : null;
 if (estadoPersistido) {
   AREAS_CAT.splice(0, AREAS_CAT.length, ...((estadoPersistido.areas || []).filter(Boolean)));
   Object.assign(AREAS_INFO, estadoPersistido.areasInfo || {});

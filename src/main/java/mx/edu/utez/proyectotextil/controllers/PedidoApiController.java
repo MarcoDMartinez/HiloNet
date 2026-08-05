@@ -1,4 +1,4 @@
-package mx.edu.utez.proyectotextil.controllers;
+package mx.edu.utez.proyectotextil.Controllers;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,13 +7,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mx.edu.utez.proyectotextil.services.PedidoService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "pedidoApiController", urlPatterns = {"/api/pedidos/*"})
 public class PedidoApiController extends HttpServlet {
-    private Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+                @Override
+                public JsonElement serialize(LocalDateTime src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
+                    return new JsonPrimitive(src == null ? null : src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                }
+            })
+            .create();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

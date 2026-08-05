@@ -1,4 +1,4 @@
-package mx.edu.utez.proyectotextil.controllers;
+package mx.edu.utez.proyectotextil.Controllers;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -57,11 +57,11 @@ public class AuthApiController extends HttpServlet {
             if (resultado.success) {
                 // Crear sesión
                 HttpSession session = request.getSession(true);
-                session.setAttribute("usuarioId", resultado.usuario.getId());
-                session.setAttribute("username", resultado.usuario.getUsername());
+                session.setAttribute("usuarioId", resultado.usuario.getIdUsuarios());
+                session.setAttribute("username", resultado.usuario.getNumeroTelefono());
                 session.setAttribute("nombre", resultado.usuario.getNombre());
-                session.setAttribute("rol", resultado.usuario.getRol());
-                session.setAttribute("area", resultado.usuario.getArea());
+                session.setAttribute("rol", resultado.usuario.getRolNombre());
+                session.setAttribute("area", resultado.usuario.getAreaNombre());
                 session.setMaxInactiveInterval(3600); // 1 hora
 
                 // Responder con éxito
@@ -69,10 +69,10 @@ public class AuthApiController extends HttpServlet {
                 respuesta.put("success", true);
                 respuesta.put("message", resultado.message);
                 respuesta.put("usuario", new HashMap<String, Object>() {{
-                    put("id", resultado.usuario.getId());
+                    put("id", resultado.usuario.getIdUsuarios());
                     put("nombre", resultado.usuario.getNombre());
-                    put("rol", resultado.usuario.getRol());
-                    put("area", resultado.usuario.getArea());
+                    put("rol", resultado.usuario.getRolNombre());
+                    put("area", resultado.usuario.getAreaNombre());
                 }});
 
                 response.setStatus(HttpServletResponse.SC_OK);

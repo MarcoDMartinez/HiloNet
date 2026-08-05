@@ -46,8 +46,9 @@ public class Incidencia {
 
     public String getPedido() { return pedido; }
     public void setPedido(String pedido) { this.pedido = pedido; }
-
+    
     public LocalDateTime getCreado() { return creado; }
+    public void setCreado(LocalDateTime creado) { this.creado = creado; }
     public LocalDateTime getActualizado() { return actualizado; }
     public void setActualizado(LocalDateTime actualizado) { this.actualizado = actualizado; }
 }

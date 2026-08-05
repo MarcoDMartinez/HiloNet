@@ -1,72 +1,155 @@
-/* Datos de ejemplo — áreas, pedidos, usuarios, tareas e incidencias iniciales de HiloNet, y el estado de sesión. */
-const AREAS_INFO = {
-  corte:   { label: 'Corte',   cls: 'corte',   color: 'var(--azul-corte)',    worker: 'Lander B.' },
-  costura: { label: 'Costura', cls: 'costura', color: 'var(--marron-costura)', worker: 'Merari N.' },
-  diseno:  { label: 'Diseño',  cls: 'diseno',  color: 'var(--verde-diseno)',  worker: 'Marco D.' },
-};
+/* Datos iniciales — se cargan desde la base de datos y ya no dependen de valores mock. */
 
-/* Contraseñas personalizadas por sesión ('admin' o el areaKey del trabajador). Si no hay una registrada, se usa '123' por defecto. */
+function normalizarTextoParaClave(value = '') {
+  return String(value).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '');
+}
+
+function cargarJsonSincrono(url) {
+  try {
+    const request = new XMLHttpRequest();
+    request.open('GET', url, false);
+    request.send(null);
+    if (request.status >= 200 && request.status < 300) {
+      return JSON.parse(request.responseText);
+    }
+  } catch (error) {
+    console.warn('No se pudo cargar', url, error);
+  }
+  return null;
+}
+
+function parsearFecha(valor) {
+  if (!valor) return '';
+  try {
+    const fecha = new Date(valor);
+    if (!Number.isNaN(fecha.getTime())) {
+      return fecha.toISOString().split('T')[0];
+    }
+  } catch (error) {}
+  return String(valor);
+}
+
+function mapearAreaDesdeApi(areaApi) {
+  const id = areaApi.idArea ?? areaApi.id ?? areaApi.ID_AREA ?? '';
+  const nombre = areaApi.areaNombre ?? areaApi.nombre ?? areaApi.AREA_NOMBRE ?? 'Sin nombre';
+  const clave = normalizarTextoParaClave(nombre) || `area${id || 'nueva'}`;
+  const color = areaApi.color || 'var(--marron)';
+  return {
+    id: id ? String(id) : `A-${Math.max(1, AREAS_CAT.length + 1).toString().padStart(2, '0')}`,
+    nom: nombre,
+    resp: areaApi.responsable || areaApi.responsableNombre || 'Sin asignar',
+    emp: Number(areaApi.empleados || areaApi.empleadoCount || 5) || 5,
+    act: areaApi.activa !== false,
+    cls: clave,
+    areaKey: clave,
+    workerUser: areaApi.workerUser || '',
+    color,
+    turno: areaApi.turno || '',
+    descripcion: areaApi.descripcion || '',
+    areaNombre: nombre
+  };
+}
+
+function mapearUsuarioDesdeApi(usuarioApi) {
+  const nombreCompleto = [usuarioApi.nombre, usuarioApi.apellidoP, usuarioApi.apellidoM].filter(Boolean).join(' ').trim();
+  const areaNombre = usuarioApi.areaNombre || usuarioApi.area || '';
+  const rol = usuarioApi.rolNombre === 'ADMIN' ? 'Administrador' : 'Trabajador';
+  return {
+    id: usuarioApi.idUsuarios ? String(usuarioApi.idUsuarios) : (usuarioApi.id || ''),
+    nom: nombreCompleto || usuarioApi.numeroTelefono || 'Sin nombre',
+    user: usuarioApi.numeroTelefono || usuarioApi.usuario || usuarioApi.username || '',
+    area: areaNombre,
+    rol,
+    act: usuarioApi.status !== 'INACTIVO' && usuarioApi.status !== 'SUSPENDIDO'
+  };
+}
+
+function mapearPedidoDesdeApi(pedidoApi) {
+  return {
+    id: pedidoApi.id || pedidoApi.ID_PEDIDO || '',
+    cli: pedidoApi.cliente || pedidoApi.CLIENTE || '',
+    desc: pedidoApi.descripcion || pedidoApi.DESCRIPCION || '',
+    areas: pedidoApi.areas || pedidoApi.AREAS || '',
+    fecha: parsearFecha(pedidoApi.fecha || pedidoApi.FECHA),
+    est: pedidoApi.estado || pedidoApi.ESTADO || 'Pendiente',
+    estCls: (pedidoApi.estado || pedidoApi.ESTADO || 'Pendiente').toLowerCase().replace(/[^a-z]+/g, '')
+  };
+}
+
+function construirTareasDesdeApi(tareasApi) {
+  const resultado = {};
+  (tareasApi || []).forEach((tarea) => {
+    const key = normalizarTextoParaClave(tarea.area || tarea.AREA || 'sin-area') || 'sinarea';
+    if (!resultado[key]) resultado[key] = [];
+    resultado[key].push([tarea.titulo || tarea.TITULO || 'Tarea sin título', tarea.pedido || tarea.PEDIDO || 'P-0000']);
+  });
+  return resultado;
+}
+
+function construirIncidenciasDesdeApi(incidenciasApi, areasCatalogo) {
+  const resultado = {};
+  (incidenciasApi || []).forEach((incidencia) => {
+    const areaNombre = incidencia.area || incidencia.AREA || 'General';
+    const key = normalizarTextoParaClave(areaNombre) || 'general';
+    if (!resultado[key]) resultado[key] = [];
+    resultado[key].push([incidencia.id || incidencia.ID_INCIDENCIA || '', incidencia.titulo || incidencia.TITULO || '', incidencia.prioridad || incidencia.PRIORIDAD || 'Media']);
+  });
+  areasCatalogo.forEach((area) => {
+    if (!resultado[area.areaKey]) resultado[area.areaKey] = [];
+  });
+  return resultado;
+}
+
+function cargarDatosIniciales() {
+  const areasRespuesta = cargarJsonSincrono('/api/areas');
+  const areasApi = (areasRespuesta && Array.isArray(areasRespuesta.data)) ? areasRespuesta.data : [];
+  const areasCatalogo = areasApi.map(mapearAreaDesdeApi);
+  AREAS_CAT.splice(0, AREAS_CAT.length, ...areasCatalogo);
+
+  const areasInfo = {};
+  AREAS_CAT.forEach((area) => {
+    areasInfo[area.areaKey] = {
+      label: area.nom,
+      cls: area.cls,
+      color: area.color,
+      worker: area.resp,
+      areaKey: area.areaKey
+    };
+  });
+  Object.keys(AREAS_INFO).forEach((key) => delete AREAS_INFO[key]);
+  Object.assign(AREAS_INFO, areasInfo);
+
+  const usuariosRespuesta = cargarJsonSincrono('/api/usuarios');
+  const usuariosApi = (usuariosRespuesta && Array.isArray(usuariosRespuesta.data)) ? usuariosRespuesta.data : [];
+  USUARIOS.splice(0, USUARIOS.length, ...usuariosApi.map(mapearUsuarioDesdeApi));
+
+  const pedidosRespuesta = cargarJsonSincrono('/api/pedidos');
+  const pedidosApi = (pedidosRespuesta && Array.isArray(pedidosRespuesta.data)) ? pedidosRespuesta.data : [];
+  PEDIDOS.splice(0, PEDIDOS.length, ...pedidosApi.map(mapearPedidoDesdeApi));
+
+  const incidenciasRespuesta = cargarJsonSincrono('/api/incidencias');
+  const incidenciasApi = (incidenciasRespuesta && Array.isArray(incidenciasRespuesta.data)) ? incidenciasRespuesta.data : [];
+  Object.keys(INCIDENCIAS).forEach((key) => delete INCIDENCIAS[key]);
+  Object.assign(INCIDENCIAS, construirIncidenciasDesdeApi(incidenciasApi, AREAS_CAT));
+
+  const tareasRespuesta = cargarJsonSincrono('/api/tareas');
+  const tareasApi = (tareasRespuesta && Array.isArray(tareasRespuesta.data)) ? tareasRespuesta.data : [];
+  Object.keys(TAREAS).forEach((key) => delete TAREAS[key]);
+  Object.assign(TAREAS, construirTareasDesdeApi(tareasApi));
+
+  window.DATOS_DESDE_BD_CARGADOS = true;
+}
+
+const AREAS_INFO = {};
 const CONTRASENAS = {};
-
-const PEDIDOS = [
-  { id: 'P-0023', cli: 'Confecciones Morelos', desc: '20 camisetas polo bordadas', areas: 'Diseño, Costura', fecha: '2026-06-15', est: 'En producción', estCls: 'proc' },
-  { id: 'P-0021', cli: 'Uniformes UAEM', desc: '50 sudaderas con capucha', areas: 'Corte, Costura', fecha: '2026-06-18', est: 'Pendiente', estCls: 'pend' },
-  { id: 'P-0019', cli: 'Boutique Lúa', desc: '15 faldas midi denim', areas: 'Diseño, Corte', fecha: '2026-06-13', est: 'En producción', estCls: 'proc' },
-  { id: 'P-0015', cli: 'Esc. Primaria Zapata', desc: '100 playeras escolares', areas: 'Diseño, Corte, Costura', fecha: '2026-06-05', est: 'Entregado', estCls: 'comp' },
-];
-
+const PEDIDOS = [];
 const AVANCE_PEDIDOS = {};
-const AVANCE_DEFAULT = { diseno: 100, corte: 70, costura: 30 };
+const AVANCE_DEFAULT = {};
 const EVIDENCIAS_PEDIDOS = {};
-
-const AREAS_CAT = [
-  { id: 'A-01', nom: 'Diseño', resp: 'Marco D.', emp: 6, act: true, cls: 'diseno', areaKey: 'diseno', workerUser: 'tr3', color: 'var(--verde-diseno)' },
-  { id: 'A-02', nom: 'Corte', resp: 'Lander B.', emp: 8, act: true, cls: 'corte', areaKey: 'corte', workerUser: 'tr1', color: 'var(--azul-corte)' },
-  { id: 'A-03', nom: 'Costura', resp: 'Merari N.', emp: 7, act: true, cls: 'costura', areaKey: 'costura', workerUser: 'tr2', color: 'var(--marron-costura)' },
-];
-
-const USUARIOS = [
-  { id: 'E-014', nom: 'Lander Bautista', user: 'lander', area: 'Corte', rol: 'Trabajador', act: true },
-  { id: 'E-009', nom: 'Merari Núñez', user: 'merari', area: 'Costura', rol: 'Trabajador', act: true },
-  { id: 'E-003', nom: 'Marco Díaz', user: 'marcod', area: 'Diseño', rol: 'Trabajador', act: true },
-  { id: 'E-021', nom: 'Rosa Jiménez', user: 'rosaj', area: 'Corte', rol: 'Trabajador', act: true },
-  { id: 'A-001', nom: 'Admin General', user: 'admin', area: '—', rol: 'Administrador', act: true },
-];
-
-const TAREAS = {
-  corte: [
-    ['Cortar tela 20 piezas faldas', 'P-0021'], ['Corte denim 15 faldas', 'P-0019'],
-    ['Tendido de tela sudaderas', 'P-0021'], ['Corte forros camisetas', 'P-0023'],
-    ['Corte cuellos polo', 'P-0023'], ['Corte puños sudadera', 'P-0021']
-  ],
-  costura: [
-    ['Confección 20 piezas polo', 'P-0023'], ['Bordado logo empresa', 'P-0023'],
-    ['Dobladillo faldas midi', 'P-0019'], ['Confección sudaderas', 'P-0021'],
-    ['Pespunte cuellos', 'P-0023'], ['Costura de mangas', 'P-0021']
-  ],
-  diseno: [
-    ['Trazar patrón polo', 'P-0023'], ['Ficha técnica bordado', 'P-0023'],
-    ['Patrón falda midi', 'P-0019'], ['Ajuste de tallas', 'P-0019'],
-    ['Ficha técnica sudadera', 'P-0021'], ['Boceto estampado', 'P-0023']
-  ],
-};
-
-const INCIDENCIAS = {
-  corte: [
-    ['INC-002', 'Tela denim fuera de stock', 'Media'], ['INC-005', 'Iluminación área de corte', 'Baja'],
-    ['INC-008', 'Cortadora requiere mantenimiento', 'Alta'], ['INC-011', 'Falta mesa de corte auxiliar', 'Media'],
-    ['INC-014', 'Tijeras desafiladas lote 3', 'Baja'], ['INC-017', 'Retraso en insumos', 'Alta']
-  ],
-  costura: [
-    ['INC-001', 'Máquina overlock atascada', 'Alta'], ['INC-004', 'Retraso entrega hilos', 'Media'],
-    ['INC-007', 'Aguja rota lote sudaderas', 'Baja'], ['INC-010', 'Tensión hilo irregular', 'Media'],
-    ['INC-013', 'Falta hilo color vino', 'Alta'], ['INC-016', 'Pedal máquina falla', 'Media']
-  ],
-  diseno: [
-    ['INC-003', 'Error en patrón P-0019', 'Alta'], ['INC-006', 'Archivo de diseño corrupto', 'Media'],
-    ['INC-009', 'Plotter sin tinta', 'Baja'], ['INC-012', 'Medidas incorrectas ficha', 'Alta'],
-    ['INC-015', 'Falta muestra de color', 'Media'], ['INC-018', 'Software de trazo lento', 'Baja']
-  ],
-};
-
+const AREAS_CAT = [];
+const USUARIOS = [];
+const TAREAS = {};
+const INCIDENCIAS = {};
 let session = { rol: 'admin', area: null };
+
+cargarDatosIniciales();
