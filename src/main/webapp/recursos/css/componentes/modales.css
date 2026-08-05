@@ -4,3 +4,14 @@
 .modal { background: #fff; border-radius: 16px; padding: 32px; max-width: 620px; width: 100%; max-height: 90vh; overflow: auto; }
 .modal h2 { margin-bottom: 6px; }
 .modal .close { float: right; font-size: 20px; color: var(--texto-tenue); cursor: pointer; background: none; border: none; }
+
+.toast-body { display: flex; gap: 14px; align-items: flex-start; clear: both; }
+.toast-body .toast-icon {
+  flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 18px; font-weight: 700;
+}
+.toast-body.toast-exito .toast-icon { background: var(--verde-exito); }
+.toast-body.toast-exito h2 { color: var(--verde-exito); }
+.toast-body.toast-error .toast-icon { background: var(--rojo-error); }
+.toast-body.toast-error h2 { color: var(--rojo-error); }

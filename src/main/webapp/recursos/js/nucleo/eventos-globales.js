@@ -43,11 +43,47 @@ document.addEventListener('click', (e) => {
     return;
   }
 
+  const btnToggleArea = e.target.closest('[data-action="toggle-area"]');
+  if (btnToggleArea) {
+    toggleActivaArea(btnToggleArea.getAttribute('data-area-id'), btnToggleArea.getAttribute('data-volver'));
+    return;
+  }
+
+  const btnVincularEmpleado = e.target.closest('[data-action="vincular-empleado"]');
+  if (btnVincularEmpleado) {
+    abrirVincularEmpleado(btnVincularEmpleado.getAttribute('data-area-id'));
+    return;
+  }
+
+  const btnConfirmarVincular = e.target.closest('[data-action="confirmar-vincular-empleado"]');
+  if (btnConfirmarVincular) {
+    confirmarVincularEmpleado(btnConfirmarVincular.getAttribute('data-arg'), btnConfirmarVincular.getAttribute('data-area-id'));
+    return;
+  }
+
+  const btnQuitarEmpleadoArea = e.target.closest('[data-action="quitar-empleado-area"]');
+  if (btnQuitarEmpleadoArea) {
+    quitarEmpleadoDeArea(btnQuitarEmpleadoArea.getAttribute('data-arg'), btnQuitarEmpleadoArea.getAttribute('data-area-id'));
+    return;
+  }
+
+  const btnGuardarEdicionArea = e.target.closest('[data-action="guardar-edicion-area"]');
+  if (btnGuardarEdicionArea) {
+    guardarEdicionArea(btnGuardarEdicionArea.getAttribute('data-arg'));
+    return;
+  }
+
   // Acción Editar Pedido
   const btnEditPedido = e.target.closest('[data-action="edit-pedido"]');
   if (btnEditPedido) {
     const pid = btnEditPedido.getAttribute('data-pid');
     editarPedido(pid);
+    return;
+  }
+
+  const btnGuardarEdicionPedido = e.target.closest('[data-action="guardar-edicion-pedido"]');
+  if (btnGuardarEdicionPedido) {
+    guardarEdicionPedido(btnGuardarEdicionPedido.getAttribute('data-pid'));
     return;
   }
 
@@ -62,6 +98,13 @@ document.addEventListener('click', (e) => {
   const btnFiltrarIncidencias = e.target.closest('[data-action="filtrar-incidencias"]');
   if (btnFiltrarIncidencias) {
     filtrarIncidenciasAdmin(btnFiltrarIncidencias.getAttribute('data-filtro'));
+    return;
+  }
+
+  // Cambio de pestaña dentro de Incidencias (admin): Registro interno / Publicar incidencias
+  const btnTabIncidencias = e.target.closest('[data-action="cambiar-tab-incidencias"]');
+  if (btnTabIncidencias) {
+    cambiarTabIncidencias(btnTabIncidencias.getAttribute('data-tab'));
     return;
   }
 
@@ -99,20 +142,52 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  const btnAddDesglose = e.target.closest('[data-action="add-desglose"]');
-  if (btnAddDesglose) {
-    agregarDesglosePedido();
-    return;
-  }
-
-  const btnRemoveDesglose = e.target.closest('[data-action="remove-desglose"]');
-  if (btnRemoveDesglose) {
-    btnRemoveDesglose.closest('.pedido-desglose-row')?.remove();
-    return;
-  }
-
   if (e.target.closest('#btnCreatePedido')) {
     crearNuevoPedidoDesdeFormulario();
+    return;
+  }
+
+  if (e.target.closest('#btnCreateTrabajador')) {
+    crearNuevoTrabajadorDesdeFormulario();
+    return;
+  }
+
+  if (e.target.closest('#btnCambiarClave')) {
+    cambiarContrasenaSesion();
+    return;
+  }
+
+  if (e.target.closest('#btnGenerarClave')) {
+    generarClaveEnFormulario();
+    return;
+  }
+
+  const btnRestablecerClave = e.target.closest('[data-action="restablecer-clave"]');
+  if (btnRestablecerClave) {
+    restablecerClaveUsuario(btnRestablecerClave.getAttribute('data-arg'));
+    return;
+  }
+
+  const btnToggleActivoUsuario = e.target.closest('[data-action="toggle-activo-usuario"]');
+  if (btnToggleActivoUsuario) {
+    toggleActivoUsuario(btnToggleActivoUsuario.getAttribute('data-arg'), btnToggleActivoUsuario.getAttribute('data-volver'));
+    return;
+  }
+
+  const btnEliminarUsuario = e.target.closest('[data-action="eliminar-usuario"]');
+  if (btnEliminarUsuario) {
+    eliminarUsuario(btnEliminarUsuario.getAttribute('data-arg'));
+    return;
+  }
+
+  if (e.target.closest('#btnCreateIncidencia')) {
+    crearNuevaIncidenciaDesdeFormulario();
+    return;
+  }
+
+  const btnGuardarSeguimiento = e.target.closest('[data-action="guardar-seguimiento-incidencia"]');
+  if (btnGuardarSeguimiento) {
+    guardarSeguimientoIncidencia(btnGuardarSeguimiento.getAttribute('data-arg'));
     return;
   }
 
@@ -136,13 +211,35 @@ document.addEventListener('click', (e) => {
 
   const btnSubirEvidencia = e.target.closest('[data-action="subir-evidencia"]');
   if (btnSubirEvidencia) {
-    subirEvidenciaPedido(btnSubirEvidencia.getAttribute('data-pid'), btnSubirEvidencia.getAttribute('data-area'));
+    const pid = btnSubirEvidencia.getAttribute('data-pid');
+    const area = btnSubirEvidencia.getAttribute('data-area');
+    abrirSelectorEvidencia(btnSubirEvidencia, (dataUrl) => subirEvidenciaPedido(pid, area, dataUrl));
+    return;
+  }
+
+  const btnSubirEvidenciaAdmin = e.target.closest('.evidencia-upload:not([data-action])');
+  if (btnSubirEvidenciaAdmin) {
+    abrirSelectorEvidencia(btnSubirEvidenciaAdmin);
     return;
   }
 
   const btnPublicarIncidencia = e.target.closest('[data-action="publicar-incidencia"]');
   if (btnPublicarIncidencia) {
     publicarIncidenciaAdmin(btnPublicarIncidencia.getAttribute('data-area'), Number(btnPublicarIncidencia.getAttribute('data-idx')));
+    return;
+  }
+
+  // Filtro por área en Publicar incidencias (admin)
+  const btnFiltrarPublicarArea = e.target.closest('[data-action="filtrar-publicar-area"]');
+  if (btnFiltrarPublicarArea) {
+    filtrarPublicarArea(btnFiltrarPublicarArea.getAttribute('data-filtro'));
+    return;
+  }
+
+  // Filtro por estado de publicación en Publicar incidencias (admin)
+  const btnFiltrarPublicarEstado = e.target.closest('[data-action="filtrar-publicar-estado"]');
+  if (btnFiltrarPublicarEstado) {
+    filtrarPublicarEstado(btnFiltrarPublicarEstado.getAttribute('data-filtro'));
     return;
   }
 
@@ -161,16 +258,6 @@ document.addEventListener('click', (e) => {
   const btnDejarIncidencia = e.target.closest('[data-action="dejar-incidencia"]');
   if (btnDejarIncidencia) {
     dejarIncidencia(btnDejarIncidencia.getAttribute('data-area'), Number(btnDejarIncidencia.getAttribute('data-idx')));
-    return;
-  }
-
-  // Alertas rápidas ficticias (Toasts del prototipo)
-  const toastBtn = e.target.closest('[data-toast]');
-  if (toastBtn) {
-    toast(toastBtn.getAttribute('data-toast'));
-    if (toastBtn.getAttribute('data-back')) {
-      go(toastBtn.getAttribute('data-back'), toastBtn.getAttribute('data-back-arg'));
-    }
     return;
   }
 

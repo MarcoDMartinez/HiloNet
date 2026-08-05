@@ -123,27 +123,55 @@ function eliminarArea(id) {
   if (!area) return;
 
   if (esAreaBase(area)) {
-    alert('Las áreas principales no se pueden eliminar.');
+    toast('Las áreas principales no se pueden eliminar.', 'error');
     return;
   }
 
-  const confirmed = confirm(`¿Eliminar el área "${area.nom}" y quitarla por completo?`);
-  if (!confirmed) return;
+  confirmarAccion(`¿Eliminar el área "${area.nom}" y quitarla por completo? Esta acción no se puede deshacer.`, () => {
+    const index = AREAS_CAT.findIndex((item) => item.id === id);
+    if (index >= 0) {
+      AREAS_CAT.splice(index, 1);
+    }
 
-  const index = AREAS_CAT.findIndex((item) => item.id === id);
-  if (index >= 0) {
-    AREAS_CAT.splice(index, 1);
-  }
+    delete AREAS_INFO[area.areaKey];
+    delete TAREAS[area.areaKey];
+    delete INCIDENCIAS[area.areaKey];
 
-  delete AREAS_INFO[area.areaKey];
-  delete TAREAS[area.areaKey];
-  delete INCIDENCIAS[area.areaKey];
+    asegurarColoresAreas();
+    guardarEstadoPersistido();
+    renderSidebar();
+    go('areas');
+    toast(`El área ${area.nom} se eliminó correctamente.`);
+  });
+}
 
-  asegurarColoresAreas();
+function guardarEdicionArea(id) {
+  const ok = validarCamposRequeridos(['editAreaNombre'], 'Ingresa el nombre del área.');
+  if (!ok) return;
+
+  const area = AREAS_CAT.find((item) => item.id === id);
+  if (!area) return;
+
+  area.nom = $('#editAreaNombre').value.trim();
+  area.resp = $('#editAreaResponsable').value.trim() || 'Sin asignar';
+  area.turno = $('#editAreaTurno').value;
+  area.emp = Number($('#editAreaCapacidad').value) || 0;
+  area.cls = normalizeAreaKey(area.nom) || area.cls;
+
   guardarEstadoPersistido();
   renderSidebar();
-  go('areas');
-  toast(`El área ${area.nom} se eliminó correctamente.`);
+  go('detalleArea', id);
+  toast('Cambios guardados con éxito.');
+}
+
+function toggleActivaArea(id, volver) {
+  const area = AREAS_CAT.find((item) => item.id === id);
+  if (!area) return;
+
+  area.act = !area.act;
+  guardarEstadoPersistido();
+  go(volver === 'detalleArea' ? 'detalleArea' : 'areas', volver === 'detalleArea' ? id : areasPage);
+  toast(`Área ${area.act ? 'activada' : 'desactivada'} correctamente.`);
 }
 
 function crearNuevaArea() {
@@ -156,7 +184,7 @@ function crearNuevaArea() {
   const activa = $('#areaActiva') ? $('#areaActiva').checked : true;
 
   if (!nombre) {
-    alert('Ingresa el nombre del área.');
+    toast('Ingresa el nombre del área.', 'error');
     return;
   }
 

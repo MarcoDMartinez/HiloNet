@@ -1,22 +1,4 @@
-/* Vistas compartidas — pantallas de Soporte y Ajustes, iguales para administrador y trabajador. */
-function soporteView() {
-  return `
-  <h1>Soporte</h1>
-  <p class="page-sub">Centro de ayuda y contacto técnico del sistema.</p>
-  <div class="row">
-    <div class="card"><h3>Contacto técnico</h3>
-      <p class="small sec mt">Proveedor</p><b>HiloNet Software</b>
-      <p class="small sec mt">Correo</p><b>soporte@hilonet.mx</b>
-      <p class="small sec mt">Teléfono</p><b>777 987 6543 · Lun a Vie 9–18h</b>
-    </div>
-    <div class="card"><h3>Preguntas frecuentes</h3>
-      ${['¿Cómo restablezco la contraseña de un empleado?', '¿Cómo creo una nueva área?', '¿Cómo asigno una tarea?', '¿Cómo edito la prioridad de un pedido?'].map(q => `
-        <div class="list-row"><div class="grow"><div class="title" style="font-weight:500">${q}</div></div><span>›</span></div>`).join('')}
-    </div>
-  </div>
-  <button class="btn btn-primary btn-lg" data-toast="Ticket de soporte generado con folio #HLN-2026">Abrir ticket de soporte</button>`;
-}
-
+/* Vistas compartidas — pantalla de Ajustes, igual para administrador y trabajador. */
 function ajusteView() {
   return `
   <h1>Ajustes</h1>
@@ -29,9 +11,37 @@ function ajusteView() {
     </div>
     <div class="card"><h3>Seguridad</h3>
       <p class="sec">Cambia tu contraseña cuando lo necesites.</p>
-      <button class="btn btn-primary mt" data-toast="Asistente de cambio de contraseña enviado al correo electrónico">Cambiar contraseña</button>
+      <div class="field"><label>Contraseña actual</label><input type="password" id="claveActual" placeholder="••••••••"></div>
+      <div class="field"><label>Nueva contraseña</label><input type="password" id="claveNueva" placeholder="••••••••"></div>
+      <div class="field"><label>Confirmar nueva contraseña</label><input type="password" id="claveConfirmar" placeholder="••••••••"></div>
+      <button type="button" class="btn btn-primary mt" id="btnCambiarClave">Cambiar contraseña</button>
       <p class="small sec mt">Notificaciones</p>
       <label class="field-checkbox-label"><input type="checkbox" checked class="input-check-auto"> Avisarme de nuevos pedidos e incidencias</label>
     </div>
   </div>`;
+}
+
+function cambiarContrasenaSesion() {
+  const actual = $('#claveActual')?.value.trim();
+  const nueva = $('#claveNueva')?.value.trim();
+  const confirmar = $('#claveConfirmar')?.value.trim();
+  const clave = session.rol === 'admin' ? 'admin' : session.area;
+  const claveVigente = CONTRASENAS[clave] || '123';
+
+  if (!actual || !nueva || !confirmar) {
+    toast('Completa los campos obligatorios: contraseña actual, nueva contraseña y confirmación.', 'error');
+    return;
+  }
+  if (actual !== claveVigente) {
+    toast('La contraseña actual no es correcta.', 'error');
+    return;
+  }
+  if (nueva !== confirmar) {
+    toast('La nueva contraseña y su confirmación no coinciden.', 'error');
+    return;
+  }
+
+  CONTRASENAS[clave] = nueva;
+  go('ajuste');
+  toast('Tu contraseña se actualizó correctamente.');
 }

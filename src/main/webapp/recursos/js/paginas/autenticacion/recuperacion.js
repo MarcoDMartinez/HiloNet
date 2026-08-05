@@ -1,5 +1,10 @@
 /* Lógica de recuperación — reutilizable para vista standalone y modal */
 (function(){
+  function mostrarAlerta(msg, tipo){
+    if (typeof toast === 'function') { toast(msg, tipo); return; }
+    alert(msg);
+  }
+
   function maskEmail(email){
     if(!email || email.indexOf('@') === -1) return email || '--';
     const [local, domain] = email.split('@');
@@ -28,8 +33,8 @@
         const userInput = root.querySelector('#recoverUsername');
         const email = emailInput ? emailInput.value.trim() : '';
         const user = userInput ? userInput.value.trim() : '';
-        if(!user){ alert('Ingresa tu nombre de usuario.'); return; }
-        if(!email){ alert('Ingresa tu correo registrado.'); return; }
+        if(!user){ mostrarAlerta('Ingresa tu nombre de usuario.', 'error'); return; }
+        if(!email){ mostrarAlerta('Ingresa tu correo registrado.', 'error'); return; }
         showSuccess(root, email);
       });
     }
@@ -38,7 +43,8 @@
       btnBack.addEventListener('click', function(e){
         if(root !== document){ // si está dentro de modal, cerrar overlay
           const overlay = document.getElementById('overlay');
-          if(overlay){ overlay.classList.add('hidden'); overlay.classList.remove('open'); overlay.style.display = ''; }
+          if(overlay){ overlay.classList.remove('open'); }
+          if(root) root.innerHTML = '';
         }
       });
     }

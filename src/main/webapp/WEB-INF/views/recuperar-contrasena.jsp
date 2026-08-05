@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar acceso — HiloNet</title>
+  <title>HiloNet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/base/variables.css">
@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/base/tipografia.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/componentes/botones.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/componentes/formularios.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/componentes/modales.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/paginas/inicio-sesion.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/recursos/css/paginas/recuperacion-contrasena.css">
 </head>
@@ -20,7 +21,7 @@
     <div class="recover-card" id="recoverCard">
       <!-- Vista: formulario de recuperación -->
       <section id="recoverForm" class="recover-section">
-        <div class="logo">🔒</div>
+        <div class="logo"></div>
         <h1>Recuperar contraseña</h1>
         <p class="hint">Ingresa tu nombre de usuario y correo registrado para recibir un enlace de verificación.</p>
 
@@ -43,7 +44,7 @@
 
         <hr class="separator">
 
-        <a href="${pageContext.request.contextPath}/" id="btnBackToLogin" class="btn btn-ghost btn-lg btn-block">Volver al inicio de sesión</a>
+        <a href="${pageContext.request.contextPath}/login" id="btnBackToLogin" class="btn btn-ghost btn-lg btn-block">Volver al inicio de sesión</a>
       </section>
 
       <!-- Vista: éxito - correo enviado -->
@@ -56,13 +57,20 @@
           <div class="muted">El enlace expira en 30 minutos.</div>
         </div>
 
-        <a href="${pageContext.request.contextPath}/" class="btn btn-primary btn-lg btn-block">Volver al inicio de sesión</a>
+        <a href="${pageContext.request.contextPath}/login" class="btn btn-primary btn-lg btn-block">Volver al inicio de sesión</a>
 
         <p class="muted small">¿No recibiste el correo? Espera 2 minutos y vuelve a intentarlo, o contacta a tu administrador.</p>
       </section>
     </div>
   </div>
 
+  <!-- Overlay para alertas (toast) -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <script src="${pageContext.request.contextPath}/recursos/js/nucleo/utilidades-dom.js"></script>
+  <script src="${pageContext.request.contextPath}/recursos/js/nucleo/interfaz.js"></script>
   <script src="${pageContext.request.contextPath}/recursos/js/paginas/autenticacion/recuperacion.js"></script>
 </body>
 </html>

@@ -1,5 +1,0 @@
-/* Píldoras de filtro — pestañas tipo píldora usadas en los filtros de las tablas. */
-.pill-tabs-zero { display: flex; gap: 8px; margin-bottom: 0; flex-wrap: wrap; }
-.pill-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.pill { padding: 6px 14px; border-radius: 8px; background: var(--blanco-calido); border: 1px solid var(--borde); font-size: 11px; cursor: pointer; }
-.pill.active { background: var(--marron); color: #fff; border-color: var(--marron); }

@@ -13,7 +13,7 @@ function renderSidebar() {
     `).join('');
 
     sb.innerHTML = `
-      <div class="brand">TEXTILE</div>
+      <div class="brand">HILONET</div>
       <div class="menu-title">Menú</div>
       <div class="nav-label">Navegación</div>
       <nav>${items.map(([k, l]) => `<button class="nav-item" data-view="${k}" data-go="${k}">${l}</button>`).join('')}</nav>
@@ -22,7 +22,6 @@ function renderSidebar() {
       <nav>${areasMenu}</nav>
       <div class="divider"></div>
       <div class="foot">
-        <button class="nav-item" data-view="soporte" data-go="soporte">Soporte</button>
         <button class="nav-item" data-view="ajuste" data-go="ajuste">Ajuste</button>
         <button class="nav-item" id="btnSalir">Cerrar sesión</button>
       </div>`;
@@ -30,15 +29,14 @@ function renderSidebar() {
     const a = getAreaInfo(session.area);
     const items = [['inicio', 'Inicio'], ['incidencias', 'Incidencias'], ['pedidos', 'Pedidos']];
     sb.innerHTML = `
-      <div class="brand">TEXTILE</div>
+      <div class="brand">HILONET</div>
       <div class="menu-title">Menú</div>
       <div class="nav-label">Área: ${a.label}</div>
       <nav>${items.map(([k, l]) => `<button class="nav-item ${a.cls ? `area-${a.cls}` : ''}" data-view="${k}" data-go="${k}">${l}</button>`).join('')}</nav>
       <div class="divider"></div>
       <div class="foot">
-        <button class="nav-item" data-view="soporte" data-go="soporte">Soporte</button>
-        <button class="nav-item" data-view="ajuste" data-go="ajuste">Ajuste</button>
-        <button class="nav-item" id="btnSalir">Cerrar sesión</button>
+        <button class="nav-item ${a.cls ? `area-${a.cls}` : ''}" data-view="ajuste" data-go="ajuste">Ajuste</button>
+        <button class="nav-item ${a.cls ? `area-${a.cls}` : ''}" id="btnSalir">Cerrar sesión</button>
       </div>`;
   }
 }

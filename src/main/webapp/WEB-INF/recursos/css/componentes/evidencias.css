@@ -1,4 +1,0 @@
-/* Evidencia — miniaturas de fotos de evidencia y recuadro para "subir archivo". */
-.evidencia-box { width: 100px; height: 80px; background: var(--borde); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--marron); }
-.evidencia-upload { width: 100px; height: 80px; background: var(--blanco-calido); border: 1px dashed var(--borde-fuerte); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--marron); }
-.img-square { width: 100px; height: 100px; flex-shrink: 0; }

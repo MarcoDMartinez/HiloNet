@@ -22,8 +22,13 @@ function guardarTrabajador(id) {
   const trabajador = USUARIOS.find((user) => user.id === id);
   if (!trabajador) return;
 
-  trabajador.nom = nameInput.value.trim() || trabajador.nom;
-  trabajador.user = userInput.value.trim() || trabajador.user;
+  if (!nameInput.value.trim() || !userInput.value.trim()) {
+    toast('Completa los campos obligatorios: nombre y nombre de usuario.', 'error');
+    return;
+  }
+
+  trabajador.nom = nameInput.value.trim();
+  trabajador.user = userInput.value.trim();
   trabajador.area = areaSelect.value;
   trabajador.puesto = puestoInput ? puestoInput.value.trim() : trabajador.puesto;
 

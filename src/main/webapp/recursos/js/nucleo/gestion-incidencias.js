@@ -31,3 +31,10 @@ function getIncidenciasPublicadasArea(areaKey) {
     .map((it, i) => ({ it, i }))
     .filter(({ i }) => isIncidenciaPublicada(areaKey, i));
 }
+
+function countIncidenciasSinPublicar() {
+  return Object.keys(INCIDENCIAS).reduce(
+    (acc, areaKey) => acc + getAreaIncidents(areaKey).filter((_, idx) => !isIncidenciaPublicada(areaKey, idx)).length,
+    0
+  );
+}

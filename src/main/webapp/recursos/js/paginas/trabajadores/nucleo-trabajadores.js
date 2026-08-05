@@ -1,4 +1,4 @@
-/* Núcleo trabajador — objeto WORKER, plantilla de paginación y las vistas Soporte/Ajustes del trabajador. */
+/* Núcleo trabajador — objeto WORKER, plantilla de paginación y la vista de Ajustes del trabajador. */
 const WORKER_PAGE_SIZE = 4;
 
 function paginacionWorkerHTML(view, page, totalPaginas) {
@@ -11,6 +11,5 @@ function paginacionWorkerHTML(view, page, totalPaginas) {
 }
 
 const WORKER = {
-  soporte() { return soporteView(); },
   ajuste() { return ajusteView(); }
 };

@@ -3,16 +3,18 @@ function validarCredenciales(usuario, password) {
   const user = (usuario || '').trim().toLowerCase();
   const pass = (password || '').trim();
 
-  if (pass !== '123') {
-    return { ok: false, message: 'La contraseña es incorrecta. Usa 123.' };
-  }
-
   if (user === 'ad' || user === 'admin') {
+    if (pass !== (CONTRASENAS['admin'] || '123')) {
+      return { ok: false, message: 'La contraseña es incorrecta.' };
+    }
     return { ok: true, who: 'admin' };
   }
 
   const area = typeof window.getAreaForUser === 'function' ? window.getAreaForUser(user) : null;
   if (area && /^tr\d+$/.test(user)) {
+    if (pass !== (CONTRASENAS[area.areaKey] || '123')) {
+      return { ok: false, message: 'La contraseña es incorrecta.' };
+    }
     return { ok: true, who: area.areaKey, area };
   }
 
@@ -25,42 +27,14 @@ function iniciarSesionDesdeFormulario() {
   const resultado = validarCredenciales(usuario, password);
 
   if (!resultado.ok) {
-    alert(resultado.message);
+    toast(resultado.message, 'error');
     return;
   }
 
   entrar(resultado.who, resultado.area);
 }
 
-function mostrarRecuperacion() {
-  const cardLogin = document.getElementById('cardLoginMain');
-  const cardRecover = document.getElementById('cardRecover');
-  if (cardLogin && cardRecover) {
-    cardLogin.classList.add('hidden');
-    cardRecover.classList.remove('hidden');
-  }
-}
-
-function mostrarLogin() {
-  const cardLogin = document.getElementById('cardLoginMain');
-  const cardRecover = document.getElementById('cardRecover');
-  if (cardLogin && cardRecover) {
-    cardRecover.classList.add('hidden');
-    cardLogin.classList.remove('hidden');
-  }
-}
-
 document.addEventListener('click', (e) => {
-  if (e.target.closest('#btnRecoverInside')) {
-    e.preventDefault();
-    mostrarRecuperacion();
-  }
-
-  if (e.target.closest('#btnBackToLogin')) {
-    e.preventDefault();
-    mostrarLogin();
-  }
-
   if (e.target.closest('#btnTogglePassword')) {
     e.preventDefault();
     const input = document.getElementById('loginPassword');
@@ -78,5 +52,3 @@ document.addEventListener('click', (e) => {
 
 window.validarCredenciales = validarCredenciales;
 window.iniciarSesionDesdeFormulario = iniciarSesionDesdeFormulario;
-window.mostrarRecuperacion = mostrarRecuperacion;
-window.mostrarLogin = mostrarLogin;

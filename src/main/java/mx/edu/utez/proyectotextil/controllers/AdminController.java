@@ -8,7 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "adminController", urlPatterns = {"/admin", "/administrador"})
-public class AdminController extends HttpServlet {
+public class
+AdminController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

@@ -1,6 +1,14 @@
 /* Vista Pedidos (trabajador) — pedidos activos y el avance/evidencia del área del trabajador en cada uno. */
-WORKER.pedidos = function () {
+let pedidosWorkerPage = 0;
+const WORKER_PEDIDOS_PAGE_SIZE = 5;
+
+WORKER.pedidos = function (arg) {
   const a = getAreaInfo(session.area);
+  const totalPaginas = Math.max(1, Math.ceil(PEDIDOS.length / WORKER_PEDIDOS_PAGE_SIZE));
+  pedidosWorkerPage = (arg !== undefined && arg !== null) ? (parseInt(arg, 10) || 0) : 0;
+  pedidosWorkerPage = Math.min(Math.max(pedidosWorkerPage, 0), totalPaginas - 1);
+  const inicio = pedidosWorkerPage * WORKER_PEDIDOS_PAGE_SIZE;
+  const pedidosPagina = PEDIDOS.slice(inicio, inicio + WORKER_PEDIDOS_PAGE_SIZE);
   return `
     <h1>Pedidos</h1>
     <p class="page-sub">Pedidos activos y las actividades que te corresponden.</p>
@@ -10,7 +18,7 @@ WORKER.pedidos = function () {
       <div class="stat"><div class="n" style="color:var(--verde-exito)">1</div><div class="l">Completadas hoy</div></div>
     </div>
     <div id="trayList">
-      ${PEDIDOS.map(p => `
+      ${pedidosPagina.map(p => `
         <div class="card">
           <div class="flex between">
             <div>
@@ -22,7 +30,8 @@ WORKER.pedidos = function () {
           <button class="btn btn-primary btn-sm mt" data-go="detallePedido" data-arg="${p.id}">Ver detalle</button>
         </div>
       `).join('')}
-    </div>`;
+    </div>
+    ${PEDIDOS.length ? paginacionWorkerHTML('pedidos', pedidosWorkerPage, totalPaginas) : ''}`;
 };
 
 WORKER.detallePedido = function (id) {
@@ -55,7 +64,7 @@ WORKER.detallePedido = function (id) {
         <h3>Evidencia del trabajo — ${a.label}</h3>
         <p class="page-sub-zero mt">Sube una foto de evidencia para avanzar tu progreso en esta área.</p>
         <div class="flex mt gap-10" style="flex-wrap:wrap">
-          ${evidencias.map((ev) => `<div class="evidencia-box">${ev}</div>`).join('')}
+          ${evidencias.map((ev) => `<div class="evidencia-box"><img src="${ev}" alt="Evidencia subida" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;"></div>`).join('')}
           ${involucrado && avance < 100 ? `<div class="evidencia-upload" data-action="subir-evidencia" data-pid="${p.id}" data-area="${a.areaKey}">+ Subir</div>` : ''}
         </div>
       </div>
@@ -80,8 +89,8 @@ WORKER.detallePedido = function (id) {
     <div class="card"><p class="sec">Este pedido no tiene actividades asignadas a tu área.</p></div>`}`;
 };
 
-function subirEvidenciaPedido(pedidoId, areaKey) {
-  agregarEvidencia(pedidoId, areaKey);
+function subirEvidenciaPedido(pedidoId, areaKey, imagenDataUrl) {
+  agregarEvidencia(pedidoId, areaKey, imagenDataUrl);
   const actual = getAvancePedido(pedidoId, areaKey);
   setAvancePedido(pedidoId, areaKey, actual + 20);
   go('detallePedido', pedidoId);

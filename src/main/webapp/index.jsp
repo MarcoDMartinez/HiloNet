@@ -59,7 +59,7 @@
         </div>
 
         <div class="forgot-password-container">
-            <a href="#" class="link-forgot" id="btnRecoverInside">¿Olvidaste tu contraseña?</a>
+            <a href="${pageContext.request.contextPath}/recuperar" class="link-forgot" id="btnRecoverInside">¿Olvidaste tu contraseña?</a>
         </div>
 
         <button id="btnEnterDefault" class="btn btn-primary btn-lg btn-block" type="button">Entrar</button>
@@ -67,17 +67,6 @@
         <p class="contact-admin-text">
             ¿No tienes cuenta? Contacta a tu administrador
         </p>
-    </div>
-
-    <!-- NUEVA: Tarjeta Dinámica de Recuperación de Contraseña -->
-    <div class="login-card hidden" id="cardRecover">
-        <div class="logo">🔒</div>
-        <h1 id="recoverTitle">Recuperar Acceso</h1>
-        <p class="tagline" id="recoverSubtitle">Ingresa tus datos para restablecer tu cuenta.</p>
-
-        <div id="recoverFormContext">
-            <button class="btn btn-ghost btn-block" id="btnBackToLogin" type="button">← Regresar al login</button>
-        </div>
     </div>
 </div>
 
@@ -127,5 +116,3 @@
 <script src="${pageContext.request.contextPath}/recursos/js/paginas/trabajadores/vista-inicio.js"></script>
 <script src="${pageContext.request.contextPath}/recursos/js/paginas/trabajadores/vista-incidencias.js"></script>
 <script src="${pageContext.request.contextPath}/recursos/js/paginas/trabajadores/vista-pedidos.js"></script>
-<script src="${pageContext.request.contextPath}/recursos/js/paginas/autenticacion/recuperacion.js"></script>
-<script src="${pageContext.request.contextPath}/recursos/js/nucleo/modal-recuperacion.js"></script>
