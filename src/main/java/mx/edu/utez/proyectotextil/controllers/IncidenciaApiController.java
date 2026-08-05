@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "incidenciaApiController", urlPatterns = {"/api/incidencias/*"})
-public class IncidenciaApiController extends HttpServlet {
+public class         IncidenciaApiController extends HttpServlet {
     private Gson gson = new Gson();
 
     @Override
