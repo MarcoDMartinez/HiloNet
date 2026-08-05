@@ -142,18 +142,6 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  const btnAddDesglose = e.target.closest('[data-action="add-desglose"]');
-  if (btnAddDesglose) {
-    agregarDesglosePedido();
-    return;
-  }
-
-  const btnRemoveDesglose = e.target.closest('[data-action="remove-desglose"]');
-  if (btnRemoveDesglose) {
-    btnRemoveDesglose.closest('.pedido-desglose-row')?.remove();
-    return;
-  }
-
   if (e.target.closest('#btnCreatePedido')) {
     crearNuevoPedidoDesdeFormulario();
     return;
@@ -223,7 +211,9 @@ document.addEventListener('click', (e) => {
 
   const btnSubirEvidencia = e.target.closest('[data-action="subir-evidencia"]');
   if (btnSubirEvidencia) {
-    subirEvidenciaPedido(btnSubirEvidencia.getAttribute('data-pid'), btnSubirEvidencia.getAttribute('data-area'));
+    const pid = btnSubirEvidencia.getAttribute('data-pid');
+    const area = btnSubirEvidencia.getAttribute('data-area');
+    abrirSelectorEvidencia(btnSubirEvidencia, (dataUrl) => subirEvidenciaPedido(pid, area, dataUrl));
     return;
   }
 

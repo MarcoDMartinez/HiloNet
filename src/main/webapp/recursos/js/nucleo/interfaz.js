@@ -66,8 +66,9 @@ function generarPasswordAleatoria() {
   return `${bloque(4, letras)}-${bloque(3, letras)}-${bloque(3, numeros)}`;
 }
 
-/* Abre el selector de archivos del sistema y agrega la imagen elegida como evidencia junto al botón "+ Subir". */
-function abrirSelectorEvidencia(uploadEl) {
+/* Abre el selector de archivos del sistema para elegir una imagen. Si se da onImagenLista, se le pasa el dataURL leído
+   (para que el llamador decida qué hacer con ella); si no, se inserta directamente como evidencia junto al botón "+ Subir". */
+function abrirSelectorEvidencia(uploadEl, onImagenLista) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
@@ -80,6 +81,10 @@ function abrirSelectorEvidencia(uploadEl) {
 
     const reader = new FileReader();
     reader.onload = () => {
+      if (onImagenLista) {
+        onImagenLista(reader.result);
+        return;
+      }
       const box = document.createElement('div');
       box.className = uploadEl.classList.contains('img-square') ? 'evidencia-box img-square' : 'evidencia-box';
       box.innerHTML = `<img src="${reader.result}" alt="Evidencia subida" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;

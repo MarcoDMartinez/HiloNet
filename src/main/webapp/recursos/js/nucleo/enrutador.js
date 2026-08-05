@@ -34,9 +34,9 @@ function renderSidebar() {
       <div class="nav-label">Área: ${a.label}</div>
       <nav>${items.map(([k, l]) => `<button class="nav-item ${a.cls ? `area-${a.cls}` : ''}" data-view="${k}" data-go="${k}">${l}</button>`).join('')}</nav>
       <div class="divider"></div>
-      <div class="foot" style="--color-area:${a.color}">
-        <button class="nav-item nav-item-area-accent" data-view="ajuste" data-go="ajuste">Ajuste</button>
-        <button class="nav-item nav-item-area-accent" id="btnSalir">Cerrar sesión</button>
+      <div class="foot">
+        <button class="nav-item ${a.cls ? `area-${a.cls}` : ''}" data-view="ajuste" data-go="ajuste">Ajuste</button>
+        <button class="nav-item ${a.cls ? `area-${a.cls}` : ''}" id="btnSalir">Cerrar sesión</button>
       </div>`;
   }
 }

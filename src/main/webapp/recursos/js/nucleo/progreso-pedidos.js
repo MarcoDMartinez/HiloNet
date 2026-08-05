@@ -13,10 +13,10 @@ function getEvidencias(pedidoId, areaKey) {
   return EVIDENCIAS_PEDIDOS[pedidoId]?.[areaKey] || [];
 }
 
-function agregarEvidencia(pedidoId, areaKey) {
+function agregarEvidencia(pedidoId, areaKey, imagenDataUrl) {
   if (!EVIDENCIAS_PEDIDOS[pedidoId]) EVIDENCIAS_PEDIDOS[pedidoId] = {};
   if (!EVIDENCIAS_PEDIDOS[pedidoId][areaKey]) EVIDENCIAS_PEDIDOS[pedidoId][areaKey] = [];
-  EVIDENCIAS_PEDIDOS[pedidoId][areaKey].push(`Foto ${EVIDENCIAS_PEDIDOS[pedidoId][areaKey].length + 1}`);
+  EVIDENCIAS_PEDIDOS[pedidoId][areaKey].push(imagenDataUrl);
 }
 
 function getNextPedidoId() {

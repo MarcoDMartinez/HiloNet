@@ -62,12 +62,6 @@ ADMIN.crearPedido = function () {
           <button type="button" class="btn btn-ghost area-activity-add" data-action="add-activity" data-area="${key}">+ Agregar actividad</button>
         </div>`;
 
-  const desgloseRow = (sexo, pzs, talla) => `
-        <div class="pedido-desglose-row">
-          <span>${sexo}</span><span class="sec">${pzs} pzs</span><span class="sec">Talla ${talla}</span>
-          <span class="remove-row" data-action="remove-desglose" title="Quitar">✕</span>
-        </div>`;
-
   return `
     <h1>Nuevo Pedido</h1>
     <p class="page-sub">Llena los datos del pedido, agrega actividades por área y sube imágenes del diseño</p>
@@ -87,16 +81,6 @@ ADMIN.crearPedido = function () {
           </div>
           <div class="field-row">
             <div class="field"><label>Fecha de entrega *</label><input type="date" id="pedidoFecha"></div>
-            <div class="field"><label>Cantidad total</label><input id="pedidoCantidad" placeholder="Ej. 50 piezas"></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label class="hidden">Sexo</label>
-              <select id="pedidoSexo"><option value="" disabled selected>Sexo</option><option>Ropa mujer</option><option>Ropa hombre</option><option>Unisex</option></select>
-            </div>
-            <div class="field"><label class="hidden">Pzs</label><input id="pedidoPzs" placeholder="Pzs" type="number" min="1"></div>
-            <div class="field"><label class="hidden">Talla</label>
-              <select id="pedidoTalla"><option value="" disabled selected>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>Unitalla</option></select>
-            </div>
           </div>
           <div class="field"><label>Imágenes del diseño</label>
             <div class="flex gap-10">
@@ -105,12 +89,6 @@ ADMIN.crearPedido = function () {
               <div class="evidencia-upload img-square">+ Subir</div>
             </div>
           </div>
-          <div class="pedido-desglose" id="pedidoDesglose">
-            ${desgloseRow('Ropa mujer', 10, 'M')}
-            ${desgloseRow('Ropa hombre', 10, 'L')}
-            ${desgloseRow('Unisex', 5, 'Unitalla')}
-          </div>
-          <button type="button" class="btn btn-ghost btn-sm mt" data-action="add-desglose">+ Agregar a la lista</button>
         </div>
         <div style="flex:1; min-width:300px;">
           ${areaBlock('diseno', 'Diseño', ['Trazar patrón', 'Ficha técnica'])}
@@ -243,25 +221,6 @@ function agregarActividadPedido(area) {
   item.className = `activity-item ${area}`;
   item.innerHTML = `<input type="checkbox"><span class="act-text">${nombre.trim()}</span>`;
   lista.appendChild(item);
-}
-
-function agregarDesglosePedido() {
-  const sexo = $('#pedidoSexo'), pzs = $('#pedidoPzs'), talla = $('#pedidoTalla');
-  const contenedor = $('#pedidoDesglose');
-  if (!sexo || !pzs || !talla || !contenedor) return;
-  if (!sexo.value || !pzs.value || !talla.value) {
-    toast('Selecciona sexo, cantidad de piezas y talla para agregar a la lista.', 'error');
-    return;
-  }
-  const row = document.createElement('div');
-  row.className = 'pedido-desglose-row';
-  row.innerHTML = `
-    <span>${sexo.value}</span><span class="sec">${pzs.value} pzs</span><span class="sec">Talla ${talla.value}</span>
-    <span class="remove-row" data-action="remove-desglose" title="Quitar">✕</span>`;
-  contenedor.appendChild(row);
-  sexo.value = '';
-  pzs.value = '';
-  talla.value = '';
 }
 
 function crearNuevoPedidoDesdeFormulario() {
