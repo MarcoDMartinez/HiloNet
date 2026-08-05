@@ -1,4 +1,4 @@
-package mx.edu.utez.proyectotextil.controllers;
+package mx.edu.utez.proyectotextil.Controllers;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
