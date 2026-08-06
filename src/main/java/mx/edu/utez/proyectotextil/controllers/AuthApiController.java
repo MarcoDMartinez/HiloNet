@@ -21,7 +21,7 @@ public class AuthApiController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getServletPath(); // Cambiado de getRequestURI()
+        String path = request.getServletPath();
         response.setContentType("application/json;charset=UTF-8");
 
         if ("/api/auth/login".equals(path)) {
@@ -36,7 +36,7 @@ public class AuthApiController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getServletPath(); // Cambiado de getRequestURI()
+        String path = request.getServletPath();
         response.setContentType("application/json;charset=UTF-8");
 
         if ("/api/auth/validate".equals(path)) {
@@ -60,6 +60,7 @@ public class AuthApiController extends HttpServlet {
                 session.setAttribute("usuarioId", resultado.usuario.getIdUsuarios());
                 session.setAttribute("username", resultado.usuario.getNumeroTelefono());
                 session.setAttribute("nombre", resultado.usuario.getNombre());
+                session.setAttribute("idRol", resultado.usuario.getIdRol());
                 session.setAttribute("rol", resultado.usuario.getRolNombre());
                 session.setAttribute("area", resultado.usuario.getAreaNombre());
                 session.setMaxInactiveInterval(3600); // 1 hora
@@ -68,12 +69,17 @@ public class AuthApiController extends HttpServlet {
                 Map<String, Object> respuesta = new HashMap<>();
                 respuesta.put("success", true);
                 respuesta.put("message", resultado.message);
-                respuesta.put("usuario", new HashMap<String, Object>() {{
-                    put("id", resultado.usuario.getIdUsuarios());
-                    put("nombre", resultado.usuario.getNombre());
-                    put("rol", resultado.usuario.getRolNombre());
-                    put("area", resultado.usuario.getAreaNombre());
-                }});
+
+                // Construcción estándar del mapa (evita que Gson lo elimine)
+                Map<String, Object> usuarioMap = new HashMap<>();
+                usuarioMap.put("id", resultado.usuario.getIdUsuarios());
+                usuarioMap.put("nombre", resultado.usuario.getNombre());
+                usuarioMap.put("idRol", resultado.usuario.getIdRol());
+                usuarioMap.put("id_rol", resultado.usuario.getIdRol());
+                usuarioMap.put("rol", resultado.usuario.getRolNombre());
+                usuarioMap.put("area", resultado.usuario.getAreaNombre());
+
+                respuesta.put("usuario", usuarioMap);
 
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write(gson.toJson(respuesta));
@@ -106,12 +112,17 @@ public class AuthApiController extends HttpServlet {
             Map<String, Object> respuesta = new HashMap<>();
             respuesta.put("success", true);
             respuesta.put("message", "Sesión válida");
-            respuesta.put("usuario", new HashMap<String, Object>() {{
-                put("id", session.getAttribute("usuarioId"));
-                put("nombre", session.getAttribute("nombre"));
-                put("rol", session.getAttribute("rol"));
-                put("area", session.getAttribute("area"));
-            }});
+
+            // Construcción estándar del mapa para la validación de sesión
+            Map<String, Object> usuarioMap = new HashMap<>();
+            usuarioMap.put("id", session.getAttribute("usuarioId"));
+            usuarioMap.put("nombre", session.getAttribute("nombre"));
+            usuarioMap.put("idRol", session.getAttribute("idRol"));
+            usuarioMap.put("id_rol", session.getAttribute("idRol"));
+            usuarioMap.put("rol", session.getAttribute("rol"));
+            usuarioMap.put("area", session.getAttribute("area"));
+
+            respuesta.put("usuario", usuarioMap);
 
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write(gson.toJson(respuesta));
