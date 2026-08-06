@@ -58,14 +58,22 @@ function mapearAreaDesdeApi(areaApi) {
 
 function mapearUsuarioDesdeApi(usuarioApi) {
   const nombreCompleto = [usuarioApi.nombre, usuarioApi.apellidoP, usuarioApi.apellidoM].filter(Boolean).join(' ').trim();
-  const areaNombre = usuarioApi.areaNombre || usuarioApi.area || '';
-  const rol = usuarioApi.rolNombre === 'ADMIN' ? 'Administrador' : 'Trabajador';
+  const areaNombre = usuarioApi.areaNombre || usuarioApi.area || usuarioApi.AREA_NOMBRE || '';
+
+  // Detección flexible de rol (por ID o por nombre)
+  const rolTexto = String(usuarioApi.rolNombre || usuarioApi.rol || usuarioApi.ROL_NOMBRE || '').toUpperCase();
+  const idRol = Number(usuarioApi.idRol || usuarioApi.id_rol || usuarioApi.ID_ROL);
+
+  const esAdmin = rolTexto === 'ADMIN' || rolTexto === 'ADMINISTRADOR' || idRol === 1 || idRol === 21;
+  const rol = esAdmin ? 'Administrador' : 'Trabajador';
+
   return {
     id: usuarioApi.idUsuarios ? String(usuarioApi.idUsuarios) : (usuarioApi.id || ''),
     nom: nombreCompleto || usuarioApi.numeroTelefono || 'Sin nombre',
     user: usuarioApi.numeroTelefono || usuarioApi.usuario || usuarioApi.username || '',
     area: areaNombre,
     rol,
+    idRol: idRol || (esAdmin ? 1 : 2),
     act: usuarioApi.status !== 'INACTIVO' && usuarioApi.status !== 'SUSPENDIDO'
   };
 }
@@ -156,6 +164,9 @@ const AREAS_CAT = [];
 const USUARIOS = [];
 const TAREAS = {};
 const INCIDENCIAS = {};
-let session = { rol: 'admin', area: null };
+
+// Aseguramos que la sesión sea accesible de forma global en todos los scripts
+window.session = { rol: 'admin', area: null };
+var session = window.session;
 
 cargarDatosIniciales();

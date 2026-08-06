@@ -62,7 +62,7 @@
             <a href="${pageContext.request.contextPath}/recuperar" class="link-forgot" id="btnRecoverInside">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <button id="btnEnterDefault" class="btn btn-primary btn-lg btn-block" type="button">Entrar</button>
+        <button id="btnEnterDefault" class="btn btn-primary btn-lg btn-block" type="button" onclick="iniciarSesionDesdeFormulario()">Entrar</button>
 
         <p class="contact-admin-text">
             ¿No tienes cuenta? Contacta a tu administrador
