@@ -1,5 +1,11 @@
 /* Datos iniciales — se cargan desde la base de datos y ya no dependen de valores mock. */
 
+// Obtiene dinámicamente el context path del proyecto (ej: "/ProyectoTextil")
+const CONTEXT_PATH = (() => {
+  const firstSlashIndex = window.location.pathname.indexOf('/', 1);
+  return firstSlashIndex !== -1 ? window.location.pathname.substring(0, firstSlashIndex) : '';
+})();
+
 function normalizarTextoParaClave(value = '') {
   return String(value).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '');
 }
@@ -101,7 +107,7 @@ function construirIncidenciasDesdeApi(incidenciasApi, areasCatalogo) {
 }
 
 function cargarDatosIniciales() {
-  const areasRespuesta = cargarJsonSincrono('/api/areas');
+  const areasRespuesta = cargarJsonSincrono(`${CONTEXT_PATH}/api/areas`);
   const areasApi = (areasRespuesta && Array.isArray(areasRespuesta.data)) ? areasRespuesta.data : [];
   const areasCatalogo = areasApi.map(mapearAreaDesdeApi);
   AREAS_CAT.splice(0, AREAS_CAT.length, ...areasCatalogo);
@@ -119,20 +125,20 @@ function cargarDatosIniciales() {
   Object.keys(AREAS_INFO).forEach((key) => delete AREAS_INFO[key]);
   Object.assign(AREAS_INFO, areasInfo);
 
-  const usuariosRespuesta = cargarJsonSincrono('/api/usuarios');
+  const usuariosRespuesta = cargarJsonSincrono(`${CONTEXT_PATH}/api/usuarios`);
   const usuariosApi = (usuariosRespuesta && Array.isArray(usuariosRespuesta.data)) ? usuariosRespuesta.data : [];
   USUARIOS.splice(0, USUARIOS.length, ...usuariosApi.map(mapearUsuarioDesdeApi));
 
-  const pedidosRespuesta = cargarJsonSincrono('/api/pedidos');
+  const pedidosRespuesta = cargarJsonSincrono(`${CONTEXT_PATH}/api/pedidos`);
   const pedidosApi = (pedidosRespuesta && Array.isArray(pedidosRespuesta.data)) ? pedidosRespuesta.data : [];
   PEDIDOS.splice(0, PEDIDOS.length, ...pedidosApi.map(mapearPedidoDesdeApi));
 
-  const incidenciasRespuesta = cargarJsonSincrono('/api/incidencias');
+  const incidenciasRespuesta = cargarJsonSincrono(`${CONTEXT_PATH}/api/incidencias`);
   const incidenciasApi = (incidenciasRespuesta && Array.isArray(incidenciasRespuesta.data)) ? incidenciasRespuesta.data : [];
   Object.keys(INCIDENCIAS).forEach((key) => delete INCIDENCIAS[key]);
   Object.assign(INCIDENCIAS, construirIncidenciasDesdeApi(incidenciasApi, AREAS_CAT));
 
-  const tareasRespuesta = cargarJsonSincrono('/api/tareas');
+  const tareasRespuesta = cargarJsonSincrono(`${CONTEXT_PATH}/api/tareas`);
   const tareasApi = (tareasRespuesta && Array.isArray(tareasRespuesta.data)) ? tareasRespuesta.data : [];
   Object.keys(TAREAS).forEach((key) => delete TAREAS[key]);
   Object.assign(TAREAS, construirTareasDesdeApi(tareasApi));

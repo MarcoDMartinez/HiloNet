@@ -21,12 +21,12 @@ public class AuthApiController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getRequestURI();
+        String path = request.getServletPath(); // Cambiado de getRequestURI()
         response.setContentType("application/json;charset=UTF-8");
 
-        if (path.endsWith("/api/auth/login")) {
+        if ("/api/auth/login".equals(path)) {
             handleLogin(request, response);
-        } else if (path.endsWith("/api/auth/logout")) {
+        } else if ("/api/auth/logout".equals(path)) {
             handleLogout(request, response);
         } else {
             sendError(response, HttpServletResponse.SC_NOT_FOUND, "Endpoint no encontrado");
@@ -36,10 +36,10 @@ public class AuthApiController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getRequestURI();
+        String path = request.getServletPath(); // Cambiado de getRequestURI()
         response.setContentType("application/json;charset=UTF-8");
 
-        if (path.endsWith("/api/auth/validate")) {
+        if ("/api/auth/validate".equals(path)) {
             handleValidate(request, response);
         } else {
             sendError(response, HttpServletResponse.SC_NOT_FOUND, "Endpoint no encontrado");

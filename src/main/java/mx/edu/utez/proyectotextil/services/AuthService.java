@@ -3,7 +3,7 @@ package mx.edu.utez.proyectotextil.services;
 import mx.edu.utez.proyectotextil.models.Usuario;
 import mx.edu.utez.proyectotextil.dao.UsuarioDao;
 
-public class AuthService {
+public class    AuthService {
 
     public static class LoginResult {
         public boolean success;
