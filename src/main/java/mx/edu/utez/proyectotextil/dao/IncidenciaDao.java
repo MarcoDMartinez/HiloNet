@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncidenciaDao {
+public class    IncidenciaDao {
 
     private static final String TABLE = DatabaseConnection.qualifiedName("INCIDENCIAS");
 
